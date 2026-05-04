@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="google-site-verification" content="D3uPg3G3v9V1WZyLR88tFwxKcARNidLJ528rFekrzXA" />
-<title>Snake Runner </title>
+<title>Snake Runner</title>
 
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%232a1f4a'/><rect x='8' y='28' width='12' height='12' rx='3' fill='%230a7705'/><rect x='22' y='28' width='12' height='12' rx='3' fill='%231fbb0c'/><rect x='36' y='28' width='12' height='12' rx='3' fill='%232cdd10'/><rect x='44' y='14' width='14' height='14' rx='4' fill='%2339ff14'/><circle cx='16' cy='46' r='8' fill='%23e81010'/></svg>">
 
@@ -42,7 +42,7 @@ body {
   top: 0; left: 0; right: 0; bottom: 0;
 }
 
-/* Hide any stray text nodes rendered to page */
+/* Hide stray text nodes rendered to page */
 body > *:not(.device) {
   display: none !important;
 }
@@ -127,7 +127,7 @@ body::after {
   gap: 8px;
 }
 
-/* Side ridge details */
+/* Side ridge detail — left */
 .device::before {
   content: '';
   position: absolute;
@@ -137,6 +137,7 @@ body::after {
   border-radius: 2px;
 }
 
+/* Side ridge detail — right */
 .device::after {
   content: '';
   position: absolute;
@@ -270,7 +271,7 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   MENU SYSTEM
+   MENU SYSTEM — BASE STYLES
 ═══════════════════════════════════════════════════════════════ */
 .menu {
   position: absolute;
@@ -283,6 +284,7 @@ body::after {
   z-index: 20;
   font-size: 13px;
   animation: menuFadeIn 0.18s ease-out;
+  overflow: hidden;
 }
 
 @keyframes menuFadeIn {
@@ -292,6 +294,7 @@ body::after {
 
 .menu.active { display: flex; }
 
+/* ── Menu Title Bar ── */
 .menu-title {
   background: linear-gradient(90deg, #3a78d8, #6850ee, #a040ff, #6850ee, #3a78d8);
   background-size: 200% 100%;
@@ -305,6 +308,7 @@ body::after {
   text-shadow: 0 0 12px rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.8);
   box-shadow: 0 3px 18px rgba(100,80,238,0.5), 0 1px 0 rgba(255,255,255,0.1) inset;
   animation: titleShimmer 4s linear infinite;
+  flex-shrink: 0;
 }
 
 @keyframes titleShimmer {
@@ -312,12 +316,41 @@ body::after {
   100% { background-position: 200% 50%; }
 }
 
+/* ── Menu List (non-scrollable) ── */
 .menu-list {
   list-style: none;
   flex: 1;
+  overflow-y: hidden;
 }
 
-.menu-list li {
+/* ── Menu List (scrollable — for explore menus) ── */
+.menu-list-scroll {
+  list-style: none;
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,229,255,0.3) rgba(0,0,0,0.2);
+  padding-right: 2px;
+}
+
+.menu-list-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.menu-list-scroll::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.2);
+  border-radius: 2px;
+}
+
+.menu-list-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0,229,255,0.3);
+  border-radius: 2px;
+}
+
+/* ── Menu List Item ── */
+.menu-list li,
+.menu-list-scroll li {
   padding: 10px 12px;
   display: flex;
   align-items: center;
@@ -332,7 +365,8 @@ body::after {
   overflow: hidden;
 }
 
-.menu-list li::before {
+.menu-list li::before,
+.menu-list-scroll li::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -341,7 +375,8 @@ body::after {
   transition: opacity 0.18s;
 }
 
-.menu-list li.selected {
+.menu-list li.selected,
+.menu-list-scroll li.selected {
   background: linear-gradient(90deg, rgba(60,120,220,0.22), rgba(110,80,240,0.22));
   border-color: rgba(60,120,220,0.45);
   color: #fff;
@@ -352,9 +387,14 @@ body::after {
     inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
-.menu-list li.selected::before { opacity: 1; }
+.menu-list li.selected::before,
+.menu-list-scroll li.selected::before {
+  opacity: 1;
+}
 
-.menu-list li.selected::after {
+/* Arrow marker for selected item */
+.menu-list li.selected::after,
+.menu-list-scroll li.selected::after {
   content: '▶';
   color: #00e5ff;
   font-size: 10px;
@@ -370,7 +410,11 @@ body::after {
   50%     { opacity: 0.5; transform: translateX(2px); }
 }
 
-.menu-list li:active { opacity: 0.7; transform: scale(0.98); }
+.menu-list li:active,
+.menu-list-scroll li:active {
+  opacity: 0.7;
+  transform: scale(0.98);
+}
 
 /* ── Menu Icons ── */
 .menu-icon {
@@ -386,10 +430,11 @@ body::after {
   opacity: 0.75;
 }
 
-.menu-icon.star::before  { content: "★"; border: none; font-size: 18px; }
-.menu-icon.help::before  { content: "?"; }
-.menu-icon.about::before { content: "i"; font-style: italic; }
-.menu-icon.play::before  { content: "▶"; border: none; font-size: 13px; }
+.menu-icon.star::before    { content: "★"; border: none; font-size: 18px; }
+.menu-icon.help::before    { content: "?"; }
+.menu-icon.about::before   { content: "i"; font-style: italic; }
+.menu-icon.play::before    { content: "▶"; border: none; font-size: 13px; }
+.menu-icon.ctrl::before    { content: "⚙"; border: none; font-size: 14px; }
 
 /* ── Radio Button ── */
 .radio {
@@ -402,7 +447,10 @@ body::after {
   transition: border-color 0.15s;
 }
 
-.menu-list li.selected .radio { border-color: #4a90e2; }
+.menu-list li.selected .radio,
+.menu-list-scroll li.selected .radio {
+  border-color: #4a90e2;
+}
 
 .radio.checked::after {
   content: "";
@@ -420,10 +468,53 @@ body::after {
   color: #44448a;
   letter-spacing: 1.5px;
   margin-top: 4px;
+  flex-shrink: 0;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   HIGH SCORE SCREEN
+   SCROLLABLE CONTENT AREAS — Help, About, High Score
+═══════════════════════════════════════════════════════════════ */
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,229,255,0.3) rgba(0,0,0,0.2);
+  padding: 0 2px 8px 0;
+}
+
+.scrollable-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.2);
+  border-radius: 2px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: rgba(0,229,255,0.3);
+  border-radius: 2px;
+}
+
+/* Scroll hint indicator */
+.scroll-hint {
+  text-align: center;
+  font-size: 10px;
+  color: rgba(0,229,255,0.35);
+  letter-spacing: 2px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  animation: scrollHintPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollHintPulse {
+  0%,100% { opacity: 0.4; }
+  50%     { opacity: 0.9; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HIGH SCORE SCREEN — with name entry & reset
 ═══════════════════════════════════════════════════════════════ */
 #highList li {
   justify-content: space-between;
@@ -441,9 +532,10 @@ body::after {
 .hs-rank.silver { color: #c0c0c0; text-shadow: 0 0 6px #c0c0c0; }
 .hs-rank.bronze { color: #cd7f32; text-shadow: 0 0 6px #cd7f32; }
 
-.hs-name  { flex: 1; padding: 0 8px; }
+.hs-name  { flex: 1; padding: 0 8px; color: #c0b0ff; font-size: 12px; }
 .hs-score { color: #ffdd44; text-shadow: 0 0 8px rgba(255,221,68,0.6); font-size: 12px; }
 .hs-speed { color: #7799cc; font-size: 10px; margin-left: 6px; }
+.hs-date  { color: #445580; font-size: 9px; margin-left: 4px; }
 
 .hs-empty {
   text-align: center;
@@ -451,6 +543,229 @@ body::after {
   font-size: 12px;
   padding: 20px;
   letter-spacing: 2px;
+  line-height: 2;
+}
+
+/* ── Reset Button (inside High Score menu) ── */
+.reset-scores-btn {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 9px 14px;
+  background: linear-gradient(145deg, #3a0820, #220010);
+  color: #ff6688;
+  border: 1px solid rgba(255,60,100,0.35);
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  letter-spacing: 1.5px;
+  text-align: center;
+  transition: all 0.15s ease;
+  box-shadow:
+    0 2px 0 #1a0008,
+    0 4px 14px rgba(0,0,0,0.5),
+    0 0 10px rgba(255,60,100,0.1);
+  flex-shrink: 0;
+}
+
+.reset-scores-btn:hover {
+  background: linear-gradient(145deg, #5a1030, #3a0018);
+  border-color: rgba(255,60,100,0.6);
+  box-shadow:
+    0 2px 0 #1a0008,
+    0 6px 20px rgba(0,0,0,0.6),
+    0 0 18px rgba(255,60,100,0.25);
+}
+
+.reset-scores-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 #1a0008;
+}
+
+/* ── Confirm Reset Dialog ── */
+.confirm-reset {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(4,2,18,0.96);
+  z-index: 30;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+  animation: menuFadeIn 0.16s ease-out;
+}
+
+.confirm-reset.active {
+  display: flex;
+}
+
+.confirm-reset-title {
+  color: #ff4466;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-shadow: 0 0 18px #ff4466;
+}
+
+.confirm-reset-msg {
+  color: #8888bb;
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.8;
+  letter-spacing: 0.5px;
+}
+
+.confirm-reset-buttons {
+  display: flex;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAME ENTRY OVERLAY — appears when a new high score is achieved
+═══════════════════════════════════════════════════════════════ */
+.name-entry-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, #14063a 0%, #04021a 70%);
+  z-index: 25;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  animation: menuFadeIn 0.2s ease-out;
+  padding: 24px 20px;
+}
+
+.name-entry-overlay.active {
+  display: flex;
+}
+
+.name-entry-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 18px #ffd700, 0 0 36px rgba(255,215,0,0.4);
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.name-entry-subtitle {
+  font-size: 11px;
+  color: #7766aa;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.name-entry-score-display {
+  font-size: 40px;
+  font-weight: bold;
+  color: #ffdd44;
+  text-shadow: 0 0 24px #ffdd44, 0 0 48px rgba(255,170,0,0.3);
+  line-height: 1;
+  animation: scorePulse 2.2s ease-in-out infinite;
+}
+
+/* Virtual keyboard input field */
+.name-entry-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #0a0820, #120a30);
+  border: 2px solid rgba(0,229,255,0.4);
+  border-radius: 10px;
+  padding: 8px 14px;
+  min-width: 180px;
+  justify-content: center;
+  box-shadow:
+    0 0 16px rgba(0,229,255,0.2),
+    inset 0 0 12px rgba(0,0,0,0.6);
+}
+
+.name-entry-display {
+  font-size: 20px;
+  color: #00e5ff;
+  text-shadow: 0 0 12px #00e5ff;
+  letter-spacing: 4px;
+  font-weight: bold;
+  min-width: 120px;
+  text-align: center;
+}
+
+/* Blinking cursor */
+.name-cursor {
+  width: 2px;
+  height: 22px;
+  background: #00e5ff;
+  box-shadow: 0 0 8px #00e5ff;
+  animation: cursorBlink 0.85s ease-in-out infinite;
+}
+
+@keyframes cursorBlink {
+  0%,100% { opacity: 1; }
+  50%     { opacity: 0; }
+}
+
+/* Virtual keyboard grid */
+.vkb {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 4px;
+  width: 100%;
+  max-width: 260px;
+}
+
+.vkb-key {
+  background: linear-gradient(145deg, #1c1840, #100e28);
+  border: 1px solid rgba(0,180,255,0.2);
+  color: #aac0ff;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 6px 2px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.1s;
+  box-shadow:
+    0 2px 0 #040614,
+    0 3px 8px rgba(0,0,0,0.5);
+}
+
+.vkb-key:active {
+  transform: translateY(2px);
+  background: linear-gradient(145deg, #2a2060, #1a1440);
+  color: #00e5ff;
+  text-shadow: 0 0 8px #00e5ff;
+  box-shadow: 0 0 12px rgba(0,229,255,0.4);
+  border-color: rgba(0,229,255,0.5);
+}
+
+.vkb-key.wide {
+  grid-column: span 2;
+}
+
+.vkb-key.action {
+  background: linear-gradient(145deg, #1a2840, #0e1828);
+  color: #44aaff;
+  border-color: rgba(0,150,255,0.3);
+  font-size: 10px;
+}
+
+.vkb-key.confirm-key {
+  background: linear-gradient(145deg, #1a3820, #0e2010);
+  color: #44ff88;
+  border-color: rgba(0,220,100,0.35);
+  grid-column: span 3;
+}
+
+.vkb-hint {
+  font-size: 10px;
+  color: #445577;
+  letter-spacing: 1.5px;
+  text-align: center;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -577,7 +892,7 @@ body::after {
     0 0 14px rgba(212,64,85,0.28);
 }
 
-/* ── GO Button Selected State (D-Pad navigation) ── */
+/* ── Game Over Button — Selected (D-Pad navigation highlight) ── */
 .btn.go-selected {
   transform: scale(1.08) translateY(-2px);
   box-shadow:
@@ -586,6 +901,8 @@ body::after {
     0 0 24px rgba(0,229,255,0.6),
     0 0 48px rgba(0,229,255,0.2);
   border-color: #00e5ff;
+  outline: 2px solid rgba(0,229,255,0.55);
+  outline-offset: 2px;
 }
 
 .btn.danger.go-selected {
@@ -595,7 +912,109 @@ body::after {
     0 0 24px rgba(255,80,120,0.6),
     0 0 48px rgba(255,80,120,0.2);
   border-color: #ff5080;
+  outline: 2px solid rgba(255,80,120,0.55);
+  outline-offset: 2px;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTROLLER SETTINGS MENU
+═══════════════════════════════════════════════════════════════ */
+.ctrl-section-label {
+  font-size: 10px;
+  color: #00e5ff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 8px 12px 4px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+/* ── D-Pad size variants (applied via JS to .dpad) ── */
+.dpad-size-small .dpad {
+  width: 160px !important;
+  height: 160px !important;
+}
+
+.dpad-size-small .dpad-btn {
+  width: 50px !important;
+  height: 50px !important;
+  font-size: 17px !important;
+}
+
+.dpad-size-small .dpad::before {
+  width: 50px !important;
+  height: 160px !important;
+}
+
+.dpad-size-small .dpad::after {
+  width: 160px !important;
+  height: 50px !important;
+}
+
+.dpad-size-small .dpad-center {
+  width: 50px !important;
+  height: 50px !important;
+  font-size: 7px !important;
+}
+
+.dpad-size-medium .dpad {
+  width: 200px !important;
+  height: 200px !important;
+}
+
+.dpad-size-medium .dpad-btn {
+  width: 64px !important;
+  height: 64px !important;
+  font-size: 22px !important;
+}
+
+.dpad-size-medium .dpad::before {
+  width: 64px !important;
+  height: 200px !important;
+}
+
+.dpad-size-medium .dpad::after {
+  width: 200px !important;
+  height: 64px !important;
+}
+
+.dpad-size-medium .dpad-center {
+  width: 64px !important;
+  height: 64px !important;
+  font-size: 8.5px !important;
+}
+
+.dpad-size-large .dpad {
+  width: 240px !important;
+  height: 240px !important;
+}
+
+.dpad-size-large .dpad-btn {
+  width: 78px !important;
+  height: 78px !important;
+  font-size: 26px !important;
+}
+
+.dpad-size-large .dpad::before {
+  width: 78px !important;
+  height: 240px !important;
+}
+
+.dpad-size-large .dpad::after {
+  width: 240px !important;
+  height: 78px !important;
+}
+
+.dpad-size-large .dpad-center {
+  width: 78px !important;
+  height: 78px !important;
+  font-size: 9.5px !important;
+}
+
+/* Opacity variants applied to .controller via JS */
+.dpad-opacity-low    { opacity: 0.38; }
+.dpad-opacity-medium { opacity: 0.65; }
+.dpad-opacity-high   { opacity: 1; }
 
 /* ═══════════════════════════════════════════════════════════════
    SOFT KEYS
@@ -641,15 +1060,17 @@ body::after {
   align-items: center;
   padding: 4px 0 2px;
   flex-shrink: 0;
+  transition: opacity 0.3s ease;
 }
 
 .dpad {
   position: relative;
   width: 200px;
   height: 200px;
+  transition: width 0.25s ease, height 0.25s ease;
 }
 
-/* Horizontal arm */
+/* Horizontal cross arm */
 .dpad::before {
   content: '';
   position: absolute;
@@ -662,9 +1083,10 @@ body::after {
   border-radius: 10px;
   z-index: 0;
   box-shadow: inset 0 0 24px rgba(0,0,0,0.9);
+  transition: width 0.25s ease, height 0.25s ease;
 }
 
-/* Vertical arm */
+/* Vertical cross arm */
 .dpad::after {
   content: '';
   position: absolute;
@@ -677,9 +1099,10 @@ body::after {
   border-radius: 10px;
   z-index: 0;
   box-shadow: inset 0 0 24px rgba(0,0,0,0.9);
+  transition: width 0.25s ease, height 0.25s ease;
 }
 
-/* ── D-Pad Buttons ── */
+/* ── D-Pad Directional Buttons ── */
 .dpad-btn {
   position: absolute;
   width: 64px;
@@ -697,12 +1120,13 @@ body::after {
     0 8px 18px rgba(0,0,0,0.75),
     inset 0 1px 4px rgba(255,255,255,0.07),
     0 0 12px rgba(0,220,255,0.07);
-  transition: all 0.08s;
+  transition: all 0.08s, width 0.25s ease, height 0.25s ease;
   user-select: none;
   z-index: 2;
 }
 
-.dpad-btn:active, .dpad-btn.pressed {
+.dpad-btn:active,
+.dpad-btn.pressed {
   box-shadow:
     0 2px 0 #040710,
     0 3px 8px rgba(0,0,0,0.65),
@@ -714,6 +1138,7 @@ body::after {
   text-shadow: 0 0 12px #00ffff, 0 0 24px rgba(0,255,255,0.4);
 }
 
+/* Individual button shapes & positions */
 .dpad-up {
   top: 0; left: 50%; transform: translateX(-50%);
   border-radius: 12px 12px 4px 4px;
@@ -742,7 +1167,7 @@ body::after {
 }
 .dpad-right:active { transform: translateY(-50%) translateX(-4px); }
 
-/* ── Center Button (PAUSE/SEL) ── */
+/* ── Center Button (multi-purpose: PAUSE in-game / SELECT in menus) ── */
 .dpad-center {
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
@@ -763,7 +1188,20 @@ body::after {
     inset 0 1px 5px rgba(255,255,255,0.18);
   text-shadow: 0 0 10px #ffdd44;
   z-index: 3;
-  transition: all 0.1s;
+  transition: all 0.1s, width 0.25s ease, height 0.25s ease;
+}
+
+/* Center button label changes based on context (set via JS) */
+.dpad-center.mode-select {
+  color: #00e5ff;
+  border-color: rgba(0,229,255,0.35);
+  text-shadow: 0 0 10px #00e5ff;
+}
+
+.dpad-center.mode-pause {
+  color: #ffdd44;
+  border-color: rgba(255,221,68,0.28);
+  text-shadow: 0 0 10px #ffdd44;
 }
 
 .dpad-center:active {
@@ -806,25 +1244,24 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   HELP & ABOUT CONTENT
+   HELP MENU CONTENT
 ═══════════════════════════════════════════════════════════════ */
-.about-content, .help-content {
-  flex: 1;
-  padding: 12px;
+.help-content {
   line-height: 2.3;
   color: #b0a0e0;
+  padding: 4px 0 12px;
 }
 
-.help-content .help-section-title {
+.help-section-title {
   font-weight: bold;
   color: #00e5ff;
-  margin-bottom: 6px;
+  margin: 8px 0 6px;
   font-size: 12px;
   letter-spacing: 1px;
   text-shadow: 0 0 8px rgba(0,229,255,0.5);
 }
 
-.help-content .help-row {
+.help-row {
   font-size: 12px;
   display: flex;
   align-items: center;
@@ -832,7 +1269,7 @@ body::after {
   padding: 2px 0;
 }
 
-.help-content .help-key {
+.help-key {
   background: linear-gradient(145deg, #1a1840, #0e0c28);
   border: 1px solid rgba(0,229,255,0.25);
   border-radius: 4px;
@@ -844,10 +1281,74 @@ body::after {
   flex-shrink: 0;
 }
 
-.help-content .divider {
-  margin: 12px 0;
+.help-divider {
+  margin: 10px 0;
   border: none;
   border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ABOUT MENU CONTENT
+═══════════════════════════════════════════════════════════════ */
+.about-content {
+  line-height: 2.3;
+  color: #b0a0e0;
+  padding: 4px 0 16px;
+}
+
+.about-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 18px;
+  color: #fff;
+  text-shadow: 0 0 16px #00e5ff;
+}
+
+.about-version {
+  color: #554488;
+  margin-top: 6px;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.about-desc {
+  margin-top: 20px;
+  color: #8888bb;
+  font-size: 12px;
+  line-height: 2;
+}
+
+.about-author {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #5555aa;
+}
+
+.about-rights {
+  font-size: 12px;
+  color: #5555aa;
+}
+
+.about-edition {
+  margin-top: 18px;
+  font-size: 11px;
+  color: #333360;
+}
+
+.about-feature-title {
+  font-weight: bold;
+  color: #aa88ff;
+  margin: 14px 0 4px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(170,136,255,0.4);
+}
+
+.about-feature-row {
+  font-size: 11px;
+  color: #7766aa;
+  padding: 2px 0;
+  padding-left: 8px;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -902,14 +1403,16 @@ body::after {
 
 <div class="device">
 
-  <!-- Top Speaker Grill -->
+  <!-- ── Device Top Speaker Grill ── -->
   <div class="device-top">
     <div class="speaker-dot"></div>
     <div class="speaker-dot mid"></div>
     <div class="speaker-dot"></div>
   </div>
 
-  <!-- ═══ SCREEN ═══ -->
+  <!-- ════════════════════════════════
+       SCREEN
+  ═══════════════════════════════════ -->
   <div class="screen" id="screen">
 
     <!-- ── GAME VIEW ── -->
@@ -928,9 +1431,9 @@ body::after {
       <div id="pauseBadge">⏸ PAUSED</div>
     </div>
 
-    <!-- ══════════════════════════════════════════
+    <!-- ══════════════════════════════
          MAIN MENU
-    ══════════════════════════════════════════ -->
+    ═══════════════════════════════ -->
     <div class="menu active" id="mainMenu">
       <div class="menu-title">🐍 Snake Runner</div>
       <ul class="menu-list" id="mainList">
@@ -947,6 +1450,10 @@ body::after {
           <span class="menu-icon star"></span>
           <span>High Score</span>
         </li>
+        <li data-action="controller">
+          <span class="menu-icon ctrl"></span>
+          <span>Controller Settings</span>
+        </li>
         <li data-action="help">
           <span class="menu-icon help"></span>
           <span>Help</span>
@@ -959,9 +1466,9 @@ body::after {
       <div class="menu-back-label">Back</div>
     </div>
 
-    <!-- ══════════════════════════════════════════
+    <!-- ══════════════════════════════
          SPEED MENU
-    ══════════════════════════════════════════ -->
+    ═══════════════════════════════ -->
     <div class="menu" id="speedMenu">
       <div class="menu-title">Speed Level</div>
       <ul class="menu-list" id="speedList">
@@ -981,66 +1488,163 @@ body::after {
       <div class="menu-back-label">Back</div>
     </div>
 
-    <!-- ══════════════════════════════════════════
+    <!-- ══════════════════════════════
          HIGH SCORE MENU
-    ══════════════════════════════════════════ -->
+    ═══════════════════════════════ -->
     <div class="menu" id="highMenu">
       <div class="menu-title">🏆 High Scores</div>
-      <ul class="menu-list" id="highList">
-        <!-- Populated dynamically from LocalStorage -->
+      <div class="scrollable-content">
+        <ul class="menu-list-scroll" id="highList">
+          <!-- Populated dynamically from localStorage -->
+        </ul>
+      </div>
+      <div class="scroll-hint">▼ scroll to explore ▼</div>
+      <button class="reset-scores-btn" id="resetScoresBtn">🗑 RESET ALL SCORES</button>
+      <div class="menu-back-label">Back</div>
+
+      <!-- Confirm Reset Dialog (overlay inside highMenu) -->
+      <div class="confirm-reset" id="confirmResetDialog">
+        <div class="confirm-reset-title">⚠ RESET SCORES?</div>
+        <div class="confirm-reset-msg">
+          This will permanently delete<br>all saved high scores.<br>This cannot be undone.
+        </div>
+        <div class="confirm-reset-buttons">
+          <button class="btn danger" id="confirmResetYes">✓ Yes, Reset</button>
+          <button class="btn" id="confirmResetNo">✕ Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         CONTROLLER SETTINGS MENU
+    ═══════════════════════════════ -->
+    <div class="menu" id="controllerMenu">
+      <div class="menu-title">⚙ Controller Settings</div>
+      <div class="ctrl-section-label">Button Size</div>
+      <ul class="menu-list" id="ctrlSizeList">
+        <li data-ctrlsize="small">
+          <span>⬡ Small</span>
+          <span class="radio" id="rSizeSmall"></span>
+        </li>
+        <li class="selected" data-ctrlsize="medium">
+          <span>◉ Medium</span>
+          <span class="radio checked" id="rSizeMedium"></span>
+        </li>
+        <li data-ctrlsize="large">
+          <span>⬣ Large</span>
+          <span class="radio" id="rSizeLarge"></span>
+        </li>
+      </ul>
+      <div class="ctrl-section-label">D-Pad Opacity</div>
+      <ul class="menu-list" id="ctrlOpacityList">
+        <li data-ctrlopacity="low">
+          <span>◐ Semi-transparent</span>
+          <span class="radio" id="rOpLow"></span>
+        </li>
+        <li class="selected" data-ctrlopacity="medium">
+          <span>◕ Medium</span>
+          <span class="radio checked" id="rOpMed"></span>
+        </li>
+        <li data-ctrlopacity="high">
+          <span>● Solid</span>
+          <span class="radio" id="rOpHigh"></span>
+        </li>
       </ul>
       <div class="menu-back-label">Back</div>
     </div>
 
-    <!-- ══════════════════════════════════════════
+    <!-- ══════════════════════════════
          HELP MENU
-    ══════════════════════════════════════════ -->
+    ═══════════════════════════════ -->
     <div class="menu" id="helpMenu">
       <div class="menu-title">Help</div>
-      <div class="help-content">
-        <div class="help-section-title">Navigation — D-Pad / Keyboard</div>
-        <div class="help-row"><span class="help-key">▲</span><span>Move Up</span></div>
-        <div class="help-row"><span class="help-key">◀</span><span>Move Left</span></div>
-        <div class="help-row"><span class="help-key">▶</span><span>Move Right</span></div>
-        <div class="help-row"><span class="help-key">▼</span><span>Move Down</span></div>
-        <hr class="divider">
-        <div class="help-section-title">Controls</div>
-        <div class="help-row"><span class="help-key">SEL</span><span>Pause / Resume in-game; Select in menus</span></div>
-        <div class="help-row"><span class="help-key">Esc</span><span>Back to menu</span></div>
-        <div class="help-row"><span class="help-key">P</span><span>Toggle Pause</span></div>
-        <hr class="divider">
-        <div class="help-section-title">Scoring</div>
-        <div class="help-row">🍎 <span>Eat apple → +20 points</span></div>
-        <div class="help-row">📈 <span>Every 5 apples → Level up</span></div>
+      <div class="scrollable-content">
+        <div class="help-content">
+
+          <div class="help-section-title">Navigation — D-Pad / Keyboard</div>
+          <div class="help-row"><span class="help-key">▲</span><span>Move Up</span></div>
+          <div class="help-row"><span class="help-key">◀</span><span>Move Left</span></div>
+          <div class="help-row"><span class="help-key">▶</span><span>Move Right</span></div>
+          <div class="help-row"><span class="help-key">▼</span><span>Move Down</span></div>
+          <hr class="help-divider">
+
+          <div class="help-section-title">Controls</div>
+          <div class="help-row"><span class="help-key">SEL</span><span>Pause/Resume in-game; Select in menus</span></div>
+          <div class="help-row"><span class="help-key">Esc</span><span>Back to main menu</span></div>
+          <div class="help-row"><span class="help-key">P</span><span>Toggle Pause in-game</span></div>
+          <div class="help-row"><span class="help-key">Enter</span><span>Confirm selection</span></div>
+          <hr class="help-divider">
+
+          <div class="help-section-title">Scoring</div>
+          <div class="help-row">🍎<span>Eat apple → +20 points</span></div>
+          <div class="help-row">📈<span>Every 5 apples → Level Up</span></div>
+          <div class="help-row">⚡<span>Speed increases each level</span></div>
+          <hr class="help-divider">
+
+          <div class="help-section-title">High Score</div>
+          <div class="help-row">🏆<span>Top 5 scores are saved with your name</span></div>
+          <div class="help-row">✏<span>Enter name (up to 10 chars) on new high score</span></div>
+          <div class="help-row">🗑<span>Use Reset button to clear all scores</span></div>
+          <hr class="help-divider">
+
+          <div class="help-section-title">Touch Controls</div>
+          <div class="help-row">👆<span>Swipe on screen to change direction</span></div>
+          <div class="help-row">🎮<span>D-Pad buttons for precise control</span></div>
+          <hr class="help-divider">
+
+          <div class="help-section-title">Tips & Tricks</div>
+          <div class="help-row">💡<span>Plan your path ahead of time</span></div>
+          <div class="help-row">💡<span>Use corners strategically to coil the snake</span></div>
+          <div class="help-row">💡<span>Don't reverse into yourself — 180° turns are blocked</span></div>
+          <div class="help-row">💡<span>Higher levels increase speed — stay focused!</span></div>
+
+        </div>
       </div>
+      <div class="scroll-hint">▼ scroll to explore ▼</div>
       <div class="menu-back-label">Back</div>
     </div>
 
-    <!-- ══════════════════════════════════════════
+    <!-- ══════════════════════════════
          ABOUT MENU
-    ══════════════════════════════════════════ -->
+    ═══════════════════════════════ -->
     <div class="menu" id="aboutMenu">
       <div class="menu-title">About</div>
-      <div class="about-content">
-        <div style="font-size:20px;font-weight:bold;margin-top:18px;color:#fff;text-shadow:0 0 16px #00e5ff;">🐍 Snake Runner</div>
-        <div style="color:#554488;margin-top:6px;font-size:12px;letter-spacing:1px;">Version 2.0.0</div>
-        <div style="margin-top:20px;color:#8888bb;font-size:12px;line-height:2;">
-          A retro-neon snake experience<br>
-          with particle effects &amp; dynamic<br>
-          high score tracking.
+      <div class="scrollable-content">
+        <div class="about-content">
+          <div class="about-title">🐍 Snake Runner</div>
+          <div class="about-version">Version 2.1.0 — Master Edition</div>
+          <div class="about-desc">
+            A retro-neon snake experience<br>
+            with particle effects, dynamic<br>
+            high score tracking &amp; name entry.
+          </div>
+          <div class="about-author">©2026 by Aditya</div>
+          <div class="about-rights">All rights reserved</div>
+
+          <div class="about-feature-title">✦ Features</div>
+          <div class="about-feature-row">▸ Neon retro aesthetic with particle FX</div>
+          <div class="about-feature-row">▸ Dynamic speed scaling per level</div>
+          <div class="about-feature-row">▸ Persistent high scores with name entry</div>
+          <div class="about-feature-row">▸ D-Pad, keyboard &amp; swipe controls</div>
+          <div class="about-feature-row">▸ Customizable controller size &amp; opacity</div>
+          <div class="about-feature-row">▸ Smooth scroll explore in menus</div>
+
+          <div class="about-feature-title">✦ Controls</div>
+          <div class="about-feature-row">▸ Arrow keys / WASD / Numpad supported</div>
+          <div class="about-feature-row">▸ Touch swipe on game screen</div>
+          <div class="about-feature-row">▸ On-screen D-Pad for mobile</div>
+          <div class="about-feature-row">▸ P key for pause toggle</div>
+
+          <div class="about-edition">Aditya 2 Edition — Master Rewrite</div>
         </div>
-        <div style="margin-top:20px;font-size:12px;color:#5555aa;">©2024 by
-Aditya</div>
-        <div style="font-size:12px;color:#5555aa;">All rights reserved</div>
-        <div style="margin-top:18px;font-size:11px;color:#333360;">Aditya 
-2 Edition</div>
       </div>
+      <div class="scroll-hint">▼ scroll to explore ▼</div>
       <div class="menu-back-label">Back</div>
     </div>
 
-    <!-- ══════════════════════════════════════════
+    <!-- ══════════════════════════════
          GAME OVER SCREEN
-    ══════════════════════════════════════════ -->
+    ═══════════════════════════════ -->
     <div class="menu gameover-screen" id="gameOverMenu">
       <h2>GAME OVER</h2>
       <div class="score-label">YOUR SCORE</div>
@@ -1055,6 +1659,72 @@ Aditya</div>
       </div>
     </div>
 
+    <!-- ══════════════════════════════
+         NAME ENTRY OVERLAY
+         (appears over Game Over when new high score)
+    ═══════════════════════════════ -->
+    <div class="name-entry-overlay" id="nameEntryOverlay">
+      <div class="name-entry-title">🏆 HIGH SCORE!</div>
+      <div class="name-entry-subtitle">ENTER YOUR NAME</div>
+      <div class="name-entry-score-display" id="nameEntryScore">0</div>
+
+      <div class="name-entry-input-wrapper">
+        <div class="name-entry-display" id="nameEntryDisplay">_</div>
+        <div class="name-cursor" id="nameCursor"></div>
+      </div>
+
+      <!-- Virtual keyboard -->
+      <div class="vkb" id="vkb">
+        <!-- Row 1: A–I -->
+        <div class="vkb-key" data-char="A">A</div>
+        <div class="vkb-key" data-char="B">B</div>
+        <div class="vkb-key" data-char="C">C</div>
+        <div class="vkb-key" data-char="D">D</div>
+        <div class="vkb-key" data-char="E">E</div>
+        <div class="vkb-key" data-char="F">F</div>
+        <div class="vkb-key" data-char="G">G</div>
+        <div class="vkb-key" data-char="H">H</div>
+        <div class="vkb-key" data-char="I">I</div>
+        <!-- Row 2: J–R -->
+        <div class="vkb-key" data-char="J">J</div>
+        <div class="vkb-key" data-char="K">K</div>
+        <div class="vkb-key" data-char="L">L</div>
+        <div class="vkb-key" data-char="M">M</div>
+        <div class="vkb-key" data-char="N">N</div>
+        <div class="vkb-key" data-char="O">O</div>
+        <div class="vkb-key" data-char="P">P</div>
+        <div class="vkb-key" data-char="Q">Q</div>
+        <div class="vkb-key" data-char="R">R</div>
+        <!-- Row 3: S–Z + numbers -->
+        <div class="vkb-key" data-char="S">S</div>
+        <div class="vkb-key" data-char="T">T</div>
+        <div class="vkb-key" data-char="U">U</div>
+        <div class="vkb-key" data-char="V">V</div>
+        <div class="vkb-key" data-char="W">W</div>
+        <div class="vkb-key" data-char="X">X</div>
+        <div class="vkb-key" data-char="Y">Y</div>
+        <div class="vkb-key" data-char="Z">Z</div>
+        <div class="vkb-key" data-char="!">!</div>
+        <!-- Row 4: digits 1-9 -->
+        <div class="vkb-key" data-char="1">1</div>
+        <div class="vkb-key" data-char="2">2</div>
+        <div class="vkb-key" data-char="3">3</div>
+        <div class="vkb-key" data-char="4">4</div>
+        <div class="vkb-key" data-char="5">5</div>
+        <div class="vkb-key" data-char="6">6</div>
+        <div class="vkb-key" data-char="7">7</div>
+        <div class="vkb-key" data-char="8">8</div>
+        <div class="vkb-key" data-char="9">9</div>
+        <!-- Row 5: space, 0, backspace, confirm -->
+        <div class="vkb-key action wide" data-char=" ">SPC</div>
+        <div class="vkb-key" data-char="0">0</div>
+        <div class="vkb-key action wide" data-action="del">⌫ DEL</div>
+        <div class="vkb-key confirm-key" data-action="confirm">✓ DONE</div>
+      </div>
+
+      <div class="vkb-hint">Max 10 characters · Tap or type</div>
+    </div>
+
   </div><!-- /screen -->
 
   <!-- ── SOFT KEYS ── -->
@@ -1063,14 +1733,14 @@ Aditya</div>
     <button class="soft-key" id="rightSoft">Back</button>
   </div>
 
-  <!-- ── D-PAD ── -->
-  <div class="controller">
+  <!-- ── D-PAD CONTROLLER ── -->
+  <div class="controller dpad-opacity-high dpad-size-medium" id="controllerWrapper">
     <div class="dpad">
-      <button class="dpad-btn dpad-up"     data-dir="up"    aria-label="Up">▲</button>
-      <button class="dpad-btn dpad-left"   data-dir="left"  aria-label="Left">◀</button>
-      <button class="dpad-btn dpad-center" id="centerBtn"   aria-label="Pause/Select">PAUSE<br>SEL</button>
-      <button class="dpad-btn dpad-right"  data-dir="right" aria-label="Right">▶</button>
-      <button class="dpad-btn dpad-down"   data-dir="down"  aria-label="Down">▼</button>
+      <button class="dpad-btn dpad-up"    data-dir="up"    aria-label="Up">▲</button>
+      <button class="dpad-btn dpad-left"  data-dir="left"  aria-label="Left">◀</button>
+      <button class="dpad-btn dpad-center mode-select" id="centerBtn" aria-label="Pause/Select">PAUSE<br>SEL</button>
+      <button class="dpad-btn dpad-right" data-dir="right" aria-label="Right">▶</button>
+      <button class="dpad-btn dpad-down"  data-dir="down"  aria-label="Down">▼</button>
     </div>
   </div>
 
@@ -1080,69 +1750,107 @@ Aditya</div>
 </div><!-- /device -->
 
 <!-- ════════════════════════════════════════════════════════════════
-     GAME SCRIPT
+     GAME SCRIPT — Master Rewrite
 ════════════════════════════════════════════════════════════════ -->
 <script>
 (() => {
   'use strict';
 
   /* ─────────────────────────────────────────────────────────────
-     CANVAS & CONTEXT
+     DOM REFERENCES — cached for performance
   ───────────────────────────────────────────────────────────── */
-  const canvas = document.getElementById('gameCanvas');
-  const ctx    = canvas.getContext('2d');
+  const canvas          = document.getElementById('gameCanvas');
+  const ctx             = canvas.getContext('2d');
+  const centerBtn       = document.getElementById('centerBtn');
+  const controllerEl    = document.getElementById('controllerWrapper');
+  const pauseBadge      = document.getElementById('pauseBadge');
+  const nameEntryOverlay = document.getElementById('nameEntryOverlay');
+  const nameEntryDisplay = document.getElementById('nameEntryDisplay');
+  const nameEntryScore  = document.getElementById('nameEntryScore');
+  const confirmResetDialog = document.getElementById('confirmResetDialog');
 
   /* ─────────────────────────────────────────────────────────────
      GAME CONSTANTS
   ───────────────────────────────────────────────────────────── */
-  const COLS           = 16;
-  const ROWS           = 20;
-  const HEADER_HEIGHT  = 30;
-  const FOOTER_HEIGHT  = 28;
-  const LS_KEY         = 'snakeRunner_highScores_v2';
-  const MAX_SCORES     = 5;
-  const POINTS_PER_FOOD = 20;
-  const FOODS_PER_LEVEL = 5;
+  const COLS              = 16;          // Grid columns
+  const ROWS              = 20;          // Grid rows
+  const HEADER_HEIGHT     = 30;          // px — top HUD bar
+  const FOOTER_HEIGHT     = 28;          // px — bottom HUD bar
+  const LS_KEY            = 'snakeRunner_highScores_v3';  // LocalStorage key
+  const MAX_SCORES        = 5;           // Maximum stored high scores
+  const POINTS_PER_FOOD   = 20;          // Points awarded per food eaten
+  const FOODS_PER_LEVEL   = 5;           // Foods needed per level-up
+  const MAX_NAME_LENGTH   = 10;          // Characters allowed in name entry
+  const NAME_PLACEHOLDER  = 'PLAYER';    // Default name if user skips entry
+
+  /* ─────────────────────────────────────────────────────────────
+     SPEED SETTINGS — base milliseconds per tick
+  ───────────────────────────────────────────────────────────── */
+  const speedMs = {
+    slow:   240,
+    medium: 150,
+    fast:   88
+  };
 
   /* ─────────────────────────────────────────────────────────────
      GAME STATE VARIABLES
   ───────────────────────────────────────────────────────────── */
-  let snake, dir, nextDir, food, score;
-  let alive      = false;
-  let paused     = false;
-  let gameLoop   = null;
-  let cellSize   = 18;
-  let foodCount  = 0;
-  let level      = 1;
-  let speedSetting = 'fast';
-
-  const speedMs = { slow: 240, medium: 150, fast: 88 };
+  let snake        = [];        // Array of {x,y} segments; [0] = head
+  let dir          = { x: 1, y: 0 };   // Current movement direction
+  let nextDir      = { x: 1, y: 0 };   // Buffered next direction input
+  let food         = { x: 0, y: 0 };   // Current food position
+  let score        = 0;                 // Current game score
+  let alive        = false;             // Is the game currently active?
+  let paused       = false;             // Is the game paused?
+  let gameLoop     = null;              // setInterval handle for game tick
+  let cellSize     = 18;                // Pixel size of each grid cell
+  let foodCount    = 0;                 // Total foods eaten this session
+  let level        = 1;                 // Current level
+  let speedSetting = 'fast';            // User-selected base speed
 
   /* ─────────────────────────────────────────────────────────────
-     PARTICLE SYSTEM
+     CONTROLLER CUSTOMIZATION STATE
+  ───────────────────────────────────────────────────────────── */
+  let ctrlSize    = 'medium';   // 'small' | 'medium' | 'large'
+  let ctrlOpacity = 'high';     // 'low'   | 'medium' | 'high'
+
+  /* ─────────────────────────────────────────────────────────────
+     PARTICLE SYSTEM STATE
   ───────────────────────────────────────────────────────────── */
   let particles = [];
 
   /* ─────────────────────────────────────────────────────────────
-     VISUAL ANIMATION STATE
+     VISUAL / ANIMATION STATE
   ───────────────────────────────────────────────────────────── */
-  let _lastOffX = 0;
-  let _lastOffY = 0;
-  let animFrame = 0;
+  let _lastOffX = 0;   // Cached horizontal grid offset for particle spawning
+  let _lastOffY = 0;   // Cached vertical   grid offset for particle spawning
+  let animFrame = 0;   // Frame counter for animations
 
   /* ─────────────────────────────────────────────────────────────
-     MENU STATE
+     NAME ENTRY STATE
   ───────────────────────────────────────────────────────────── */
-  let currentMenu = 'main';
-  let mainSel     = 0;
-  let speedSel    = 2;
-  let goSel       = 0;   // 0 = Restart, 1 = Home (Game Over D-Pad nav)
-
-  const mainItems  = ['newgame', 'speed', 'highscore', 'help', 'about'];
-  const speedItems = ['slow', 'medium', 'fast'];
+  let enteredName       = '';     // Name being built by the player
+  let nameEntryActive   = false;  // Is the name entry overlay showing?
+  let pendingScoreValue = 0;      // Score to save once name is confirmed
 
   /* ─────────────────────────────────────────────────────────────
-     ROUNDRECT POLYFILL
+     MENU NAVIGATION STATE
+  ───────────────────────────────────────────────────────────── */
+  let currentMenu = 'main';      // Current active context
+  let mainSel     = 0;           // Selected index in main menu
+  let speedSel    = 2;           // Selected index in speed menu (default: fast)
+  let ctrlSizeSel    = 1;        // Selected index in controller size list
+  let ctrlOpacitySel = 2;        // Selected index in controller opacity list
+  let goSel       = 0;           // 0=Restart, 1=Home on game over screen
+
+  /* Menu item arrays (parallel to DOM list items) */
+  const mainItems         = ['newgame', 'speed', 'highscore', 'controller', 'help', 'about'];
+  const speedItems        = ['slow', 'medium', 'fast'];
+  const ctrlSizeItems     = ['small', 'medium', 'large'];
+  const ctrlOpacityItems  = ['low', 'medium', 'high'];
+
+  /* ─────────────────────────────────────────────────────────────
+     ROUNDRECT POLYFILL — for older browsers
   ───────────────────────────────────────────────────────────── */
   if (!CanvasRenderingContext2D.prototype.roundRect) {
     CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
@@ -1163,70 +1871,186 @@ Aditya</div>
   }
 
   /* ─────────────────────────────────────────────────────────────
-     LOCAL STORAGE — HIGH SCORE SYSTEM
+     HTML ESCAPE UTILITY
   ───────────────────────────────────────────────────────────── */
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     LOCAL STORAGE — HIGH SCORE SYSTEM
+     Each entry: { name, score, speed, date }
+  ───────────────────────────────────────────────────────────── */
+
+  /** Load high score array from localStorage; returns [] on failure */
   function loadHighScores() {
     try {
       const raw = localStorage.getItem(LS_KEY);
-      return raw ? JSON.parse(raw) : [];
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
       return [];
     }
   }
 
+  /** Persist high score array to localStorage */
   function saveHighScores(scores) {
     try {
       localStorage.setItem(LS_KEY, JSON.stringify(scores));
     } catch (e) {
-      // LocalStorage unavailable — silently fail
+      // localStorage unavailable — fail silently
     }
   }
 
-  function addHighScore(score, speed) {
+  /** Clear all scores from localStorage and re-render the list */
+  function resetAllHighScores() {
+    try {
+      localStorage.removeItem(LS_KEY);
+    } catch (e) {
+      // Silently fail
+    }
+    renderHighScores();
+  }
+
+  /**
+   * Add a new entry to high scores.
+   * Returns { isNewBest: Boolean, qualifies: Boolean }
+   * qualifies = true if score enters the top-5 list.
+   */
+  function checkHighScore(scoreValue) {
     const scores = loadHighScores();
-    const entry  = {
-      name  : 'You',
-      score : score,
-      speed : speed.charAt(0).toUpperCase(),
+    // Qualifies if list has room OR beats the lowest current score
+    const qualifies = (
+      scores.length < MAX_SCORES ||
+      scoreValue > (scores[scores.length - 1]?.score ?? 0)
+    );
+    const isNewBest = (scores.length === 0 || scoreValue > scores[0].score);
+    return { qualifies, isNewBest };
+  }
+
+  /** Commit a finalized entry (with name) into the sorted high score list */
+  function commitHighScore(name, scoreValue) {
+    const scores = loadHighScores();
+    const entry = {
+      name  : name.trim() || NAME_PLACEHOLDER,
+      score : scoreValue,
+      speed : speedSetting.charAt(0).toUpperCase(),
       date  : new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
     };
     scores.push(entry);
     scores.sort((a, b) => b.score - a.score);
     const trimmed = scores.slice(0, MAX_SCORES);
     saveHighScores(trimmed);
-    return trimmed;
+    renderHighScores();
   }
 
+  /* ─────────────────────────────────────────────────────────────
+     HIGH SCORE LIST RENDERER
+  ───────────────────────────────────────────────────────────── */
   function renderHighScores() {
-    const scores = loadHighScores();
-    const hl     = document.getElementById('highList');
-    if (!scores.length) {
-      hl.innerHTML = `<li><div class="hs-empty">No scores yet.<br>Play a game to set the first record!</div></li>`;
-      return;
-    }
+    const scores     = loadHighScores();
+    const hl         = document.getElementById('highList');
     const rankClasses = ['gold', 'silver', 'bronze'];
     const rankSymbols = ['🥇', '🥈', '🥉'];
-    hl.innerHTML = scores.map((e, i) => {
+
+    if (!scores.length) {
+      hl.innerHTML = `<li>
+        <div class="hs-empty">
+          No scores yet.<br>
+          Play a game to set the first record!
+        </div>
+      </li>`;
+      return;
+    }
+
+    hl.innerHTML = scores.map((entry, i) => {
       const rankCls = rankClasses[i] || '';
-      const rankSym = rankSymbols[i] || (i + 1);
-      return `<li class="${i === 0 ? 'selected' : ''}">
+      const rankSym = rankSymbols[i] || `#${i + 1}`;
+      return `<li>
         <span class="hs-rank ${rankCls}">${rankSym}</span>
-        <span class="hs-name">${escapeHtml(e.name)}</span>
-        <span class="hs-score">${e.score}</span>
-        <span class="hs-speed">(${e.speed || '?'})</span>
+        <span class="hs-name">${escapeHtml(entry.name || NAME_PLACEHOLDER)}</span>
+        <span class="hs-score">${entry.score}</span>
+        <span class="hs-speed">(${entry.speed || '?'})</span>
+        <span class="hs-date">${escapeHtml(entry.date || '')}</span>
       </li>`;
     }).join('');
   }
 
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+  /* ─────────────────────────────────────────────────────────────
+     NAME ENTRY — SHOW / HIDE
+  ───────────────────────────────────────────────────────────── */
+
+  /** Open the name entry overlay for a qualifying score */
+  function showNameEntry(scoreValue) {
+    enteredName       = '';
+    pendingScoreValue = scoreValue;
+    nameEntryActive   = true;
+    nameEntryScore.textContent  = scoreValue;
+    updateNameDisplay();
+    nameEntryOverlay.classList.add('active');
+  }
+
+  /** Close the name entry overlay */
+  function hideNameEntry() {
+    nameEntryActive = false;
+    nameEntryOverlay.classList.remove('active');
+  }
+
+  /** Update the name entry display text */
+  function updateNameDisplay() {
+    nameEntryDisplay.textContent = enteredName || '';
+  }
+
+  /** Append a character to the entered name (up to MAX_NAME_LENGTH) */
+  function nameEntryAddChar(ch) {
+    if (enteredName.length >= MAX_NAME_LENGTH) return;
+    enteredName += ch;
+    updateNameDisplay();
+  }
+
+  /** Remove last character from entered name */
+  function nameEntryDeleteChar() {
+    if (enteredName.length === 0) return;
+    enteredName = enteredName.slice(0, -1);
+    updateNameDisplay();
+  }
+
+  /** Confirm the entered name and proceed to game over screen */
+  function nameEntryConfirm() {
+    const finalName = enteredName.trim() || NAME_PLACEHOLDER;
+    commitHighScore(finalName, pendingScoreValue);
+    hideNameEntry();
+    showGameOverScreen(pendingScoreValue, true);
   }
 
   /* ─────────────────────────────────────────────────────────────
-     CANVAS RESIZE
+     VIRTUAL KEYBOARD EVENTS
+  ───────────────────────────────────────────────────────────── */
+  document.querySelectorAll('.vkb-key').forEach(key => {
+    key.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      if (!nameEntryActive) return;
+
+      const ch     = key.dataset.char;
+      const action = key.dataset.action;
+
+      if (ch !== undefined) {
+        nameEntryAddChar(ch);
+      } else if (action === 'del') {
+        nameEntryDeleteChar();
+      } else if (action === 'confirm') {
+        nameEntryConfirm();
+      }
+    }, { passive: false });
+  });
+
+  /* ─────────────────────────────────────────────────────────────
+     CANVAS RESIZE — fits canvas to game view
   ───────────────────────────────────────────────────────────── */
   function resizeCanvas() {
     const view = document.getElementById('gameView');
@@ -1241,9 +2065,10 @@ Aditya</div>
   }
 
   /* ─────────────────────────────────────────────────────────────
-     GAME INIT
+     GAME INIT — reset all state for a fresh game
   ───────────────────────────────────────────────────────────── */
   function initGame() {
+    // Initial snake: 5 segments moving right, centered vertically
     snake = [
       { x: 9,  y: 10 },
       { x: 8,  y: 10 },
@@ -1251,31 +2076,38 @@ Aditya</div>
       { x: 6,  y: 10 },
       { x: 5,  y: 10 }
     ];
-    dir = nextDir = { x: 1, y: 0 };
-    score      = 0;
-    foodCount  = 0;
-    level      = 1;
-    alive      = true;
-    paused     = false;
-    particles  = [];
-    animFrame  = 0;
 
-    document.getElementById('pauseBadge').style.display = 'none';
+    dir       = { x: 1, y: 0 };
+    nextDir   = { x: 1, y: 0 };
+    score     = 0;
+    foodCount = 0;
+    level     = 1;
+    alive     = true;
+    paused    = false;
+    particles = [];
+    animFrame = 0;
+
+    pauseBadge.style.display = 'none';
     spawnFood();
     updateHUD();
+    updateCenterBtnMode();
   }
 
+  /* ─────────────────────────────────────────────────────────────
+     FOOD SPAWNING — random non-overlapping cell
+  ───────────────────────────────────────────────────────────── */
   function spawnFood() {
     let fx, fy, tries = 0;
     do {
       fx = (Math.random() * COLS) | 0;
       fy = (Math.random() * ROWS) | 0;
-    } while (snake.some(s => s.x === fx && s.y === fy) && ++tries < 500);
+      tries++;
+    } while (snake.some(s => s.x === fx && s.y === fy) && tries < 500);
     food = { x: fx, y: fy };
   }
 
   /* ─────────────────────────────────────────────────────────────
-     HUD UPDATE
+     HUD UPDATE — score, level, speed labels
   ───────────────────────────────────────────────────────────── */
   function updateHUD() {
     document.getElementById('scoreLabel').textContent = score;
@@ -1286,18 +2118,35 @@ Aditya</div>
   }
 
   /* ─────────────────────────────────────────────────────────────
-     PARTICLE SYSTEM
+     CENTER BUTTON CONTEXTUAL LABEL UPDATE
+     - Menus:   shows SELECT mode (cyan)
+     - In-game: shows PAUSE  mode (gold)
   ───────────────────────────────────────────────────────────── */
-  function spawnFoodParticles(gridX, gridY) {
-    const offX = _lastOffX;
-    const offY = _lastOffY;
-    const cx   = offX + gridX * cellSize + cellSize / 2;
-    const cy   = offY + gridY * cellSize + cellSize / 2;
+  function updateCenterBtnMode() {
+    if (currentMenu === 'game') {
+      centerBtn.classList.remove('mode-select');
+      centerBtn.classList.add('mode-pause');
+      centerBtn.innerHTML = 'PAUSE<br>SEL';
+    } else {
+      centerBtn.classList.remove('mode-pause');
+      centerBtn.classList.add('mode-select');
+      centerBtn.innerHTML = 'SELECT<br>SEL';
+    }
+  }
 
-    // Burst ring
+  /* ─────────────────────────────────────────────────────────────
+     PARTICLE SYSTEM — food burst + death explosion + score text
+  ───────────────────────────────────────────────────────────── */
+
+  /** Spawn colorful burst particles at food position when eaten */
+  function spawnFoodParticles(gridX, gridY) {
+    const cx = _lastOffX + gridX * cellSize + cellSize / 2;
+    const cy = _lastOffY + gridY * cellSize + cellSize / 2;
+
+    // Radial burst ring — 16 particles
     for (let i = 0; i < 16; i++) {
-      const angle = (Math.PI * 2 * i) / 16;
-      const spd   = 2 + Math.random() * 3.5;
+      const angle  = (Math.PI * 2 * i) / 16;
+      const spd    = 2 + Math.random() * 3.5;
       const colors = ['#ff4444', '#ff8800', '#ffdd44', '#ff2255', '#ffaa00'];
       particles.push({
         type  : 'burst',
@@ -1312,7 +2161,7 @@ Aditya</div>
       });
     }
 
-    // Sparkles
+    // Sparkle particles — 8 star shapes
     for (let i = 0; i < 8; i++) {
       const angle = Math.random() * Math.PI * 2;
       const spd   = 0.8 + Math.random() * 2.2;
@@ -1329,7 +2178,7 @@ Aditya</div>
       });
     }
 
-    // Rising score text particle
+    // Floating score text particle
     particles.push({
       type  : 'text',
       x     : cx,
@@ -1342,19 +2191,20 @@ Aditya</div>
     });
   }
 
+  /** Spawn death particles scattered along the snake body */
   function spawnDeathParticles() {
-    const offX = _lastOffX;
-    const offY = _lastOffY;
     snake.forEach((seg, i) => {
-      const cx = offX + seg.x * cellSize + cellSize / 2;
-      const cy = offY + seg.y * cellSize + cellSize / 2;
+      const cx    = _lastOffX + seg.x * cellSize + cellSize / 2;
+      const cy    = _lastOffY + seg.y * cellSize + cellSize / 2;
       const delay = i * 0.05;
+
       for (let j = 0; j < 6; j++) {
         const angle = (Math.PI * 2 * j) / 6 + Math.random();
         const spd   = 1.5 + Math.random() * 3;
         particles.push({
           type  : 'burst',
-          x     : cx, y: cy,
+          x     : cx,
+          y     : cy,
           vx    : Math.cos(angle) * spd,
           vy    : Math.sin(angle) * spd,
           life  : 1 - delay,
@@ -1366,66 +2216,75 @@ Aditya</div>
     });
   }
 
+  /** Update all particle positions, velocities and lifetimes */
   function updateParticles() {
     particles = particles.filter(p => p.life > 0);
     particles.forEach(p => {
       p.x  += p.vx;
       p.y  += p.vy;
-      p.vx *= 0.91;
+      p.vx *= 0.91;   // Air friction
       p.vy *= 0.91;
       p.life -= p.decay;
     });
   }
 
   /* ─────────────────────────────────────────────────────────────
-     GAME TICK
+     GAME TICK — called every N milliseconds by setInterval
   ───────────────────────────────────────────────────────────── */
   function tick() {
     if (!alive || paused) return;
 
     animFrame++;
 
-    // Apply direction (prevent 180° reversal)
-    if (nextDir.x !== -dir.x || nextDir.y !== -dir.y) {
+    // Apply buffered direction (block 180° reversal)
+    if (!(nextDir.x === -dir.x && nextDir.y === -dir.y)) {
       dir = nextDir;
     }
 
-    const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+    // Calculate new head position
+    const head = {
+      x: snake[0].x + dir.x,
+      y: snake[0].y + dir.y
+    };
 
-    // Wall collision
+    // ── Wall collision ──────────────────────────────────────
     if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS) {
       triggerGameOver();
       return;
     }
 
-    // Self collision
-    if (snake.some(s => s.x === head.x && s.y === head.y)) {
+    // ── Self collision ──────────────────────────────────────
+    if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
       triggerGameOver();
       return;
     }
 
     snake.unshift(head);
 
+    // ── Food collection ─────────────────────────────────────
     if (head.x === food.x && head.y === food.y) {
       score     += POINTS_PER_FOOD;
       foodCount += 1;
 
-      // Level up every N foods
+      // Level up every FOODS_PER_LEVEL foods
       const newLevel = Math.floor(foodCount / FOODS_PER_LEVEL) + 1;
       if (newLevel > level) {
         level = newLevel;
-        // Increase speed dynamically when leveling
+        // Accelerate tick interval slightly for higher levels
         if (gameLoop) {
           clearInterval(gameLoop);
-          const ms = Math.max(50, speedMs[speedSetting] - (level - 1) * 6);
-          gameLoop = setInterval(tick, ms);
+          const baseMs = speedMs[speedSetting];
+          const levelMs = Math.max(40, baseMs - (level - 1) * 6);
+          gameLoop = setInterval(tick, levelMs);
         }
       }
 
       spawnFoodParticles(food.x, food.y);
       spawnFood();
       updateHUD();
+      // Don't remove tail — snake grows
     } else {
+      // Normal move — remove tail
       snake.pop();
     }
 
@@ -1434,47 +2293,62 @@ Aditya</div>
   }
 
   /* ─────────────────────────────────────────────────────────────
-     GAME OVER TRIGGER
+     GAME OVER — handle death, scoring & screen flow
   ───────────────────────────────────────────────────────────── */
   function triggerGameOver() {
     alive = false;
     clearInterval(gameLoop);
     gameLoop = null;
 
+    // Spawn death explosion particles
     spawnDeathParticles();
-    draw(); // Show death particles
+    draw();
 
-    // Save score and determine if new best
-    const scores = addHighScore(score, speedSetting);
-    const isNewBest = (scores.length > 0 && scores[0].score === score);
+    // Check if score qualifies for the leaderboard
+    const { qualifies, isNewBest } = checkHighScore(score);
 
-    document.getElementById('finalScore').textContent = score;
-    document.getElementById('newBestBadge').style.display = isNewBest ? 'block' : 'none';
+    if (qualifies && score > 0) {
+      // Show name entry overlay first
+      setTimeout(() => {
+        showNameEntry(score);
+      }, 450);
+    } else {
+      // Directly show game over screen (no name entry needed)
+      renderHighScores();
+      setTimeout(() => {
+        showGameOverScreen(score, isNewBest);
+      }, 450);
+    }
+  }
 
-    // Refresh high score list in background
-    renderHighScores();
+  /**
+   * Display the game over menu screen.
+   * Called directly for non-qualifying scores,
+   * and after name entry for qualifying scores.
+   */
+  function showGameOverScreen(finalScore, isNewBest) {
+    document.getElementById('finalScore').textContent      = finalScore;
+    document.getElementById('newBestBadge').style.display  = isNewBest ? 'block' : 'none';
 
-    // Reset game over button selection
     goSel = 0;
     refreshGameOverButtons();
 
-    setTimeout(() => {
-      hideAllMenus();
-      document.getElementById('gameOverMenu').classList.add('active');
-      currentMenu = 'gameover';
-    }, 440);
+    hideAllMenus();
+    document.getElementById('gameOverMenu').classList.add('active');
+    currentMenu = 'gameover';
+    updateCenterBtnMode();
   }
 
   /* ─────────────────────────────────────────────────────────────
-     DRAWING — MASTER DRAW FUNCTION
+     MASTER DRAW FUNCTION — renders the entire game frame
   ───────────────────────────────────────────────────────────── */
   function draw() {
-    const W      = canvas.width;
-    const H      = canvas.height;
-    const playH  = H - HEADER_HEIGHT - FOOTER_HEIGHT;
-    const playW  = W;
+    const W     = canvas.width;
+    const H     = canvas.height;
+    const playH = H - HEADER_HEIGHT - FOOTER_HEIGHT;
+    const playW = W;
 
-    // ── Background ──────────────────────────────────────────────
+    // ── Background gradient ──────────────────────────────────
     const bgGrad = ctx.createLinearGradient(0, HEADER_HEIGHT, 0, H - FOOTER_HEIGHT);
     bgGrad.addColorStop(0,   '#060e1c');
     bgGrad.addColorStop(0.4, '#0a1424');
@@ -1483,7 +2357,7 @@ Aditya</div>
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, HEADER_HEIGHT, W, playH);
 
-    // Subtle center radial glow
+    // Subtle center radial glow for depth
     const cGlow = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.85);
     cGlow.addColorStop(0,   'rgba(0,60,140,0.1)');
     cGlow.addColorStop(0.5, 'rgba(40,0,100,0.04)');
@@ -1491,13 +2365,14 @@ Aditya</div>
     ctx.fillStyle = cGlow;
     ctx.fillRect(0, HEADER_HEIGHT, W, playH);
 
-    // ── Grid Offsets ─────────────────────────────────────────────
+    // ── Grid offset computation ──────────────────────────────
+    // Center the grid within the play area
     const offX = Math.floor((playW - COLS * cellSize) / 2);
     const offY = HEADER_HEIGHT + Math.floor((playH - ROWS * cellSize) / 2);
-    _lastOffX = offX;
-    _lastOffY = offY;
+    _lastOffX  = offX;
+    _lastOffY  = offY;
 
-    // ── Grid Dots ────────────────────────────────────────────────
+    // ── Dot grid ─────────────────────────────────────────────
     ctx.fillStyle = 'rgba(0,220,255,0.055)';
     for (let c = 0; c <= COLS; c++) {
       for (let r = 0; r <= ROWS; r++) {
@@ -1507,7 +2382,7 @@ Aditya</div>
 
     // Subtle column/row tint lines
     ctx.strokeStyle = 'rgba(0,180,255,0.025)';
-    ctx.lineWidth = 0.5;
+    ctx.lineWidth   = 0.5;
     for (let c = 1; c < COLS; c++) {
       ctx.beginPath();
       ctx.moveTo(offX + c * cellSize, offY);
@@ -1521,32 +2396,25 @@ Aditya</div>
       ctx.stroke();
     }
 
-    // ── Boundary Wall ────────────────────────────────────────────
+    // ── Draw elements ────────────────────────────────────────
     drawBoundaryWall(offX, offY);
-
-    // ── Snake ────────────────────────────────────────────────────
     drawSnake(offX, offY);
-
-    // ── Food ─────────────────────────────────────────────────────
     drawApple(
       offX + food.x * cellSize + cellSize / 2,
       offY + food.y * cellSize + cellSize / 2,
       cellSize * 0.42
     );
-
-    // ── Food pulse ring ──────────────────────────────────────────
     drawFoodPulse(
       offX + food.x * cellSize + cellSize / 2,
       offY + food.y * cellSize + cellSize / 2,
       cellSize * 0.5
     );
-
-    // ── Particles ────────────────────────────────────────────────
     drawParticles();
   }
 
   /* ─────────────────────────────────────────────────────────────
-     DRAW — BOUNDARY WALL (neon cyan frame with corners)
+     DRAW — BOUNDARY WALL
+     Neon cyan frame with animated scan line and corner accents
   ───────────────────────────────────────────────────────────── */
   function drawBoundaryWall(offX, offY) {
     const t   = Date.now() / 2200;
@@ -1563,7 +2431,7 @@ Aditya</div>
     ctx.lineWidth   = 1.8;
     ctx.strokeRect(offX - pad, offY - pad, ww + pad * 2, wh + pad * 2);
 
-    // Secondary inner border (purple accent)
+    // Secondary inner border — purple accent
     ctx.shadowColor = '#8a00ff';
     ctx.shadowBlur  = 8;
     ctx.strokeStyle = 'rgba(138,0,255,0.35)';
@@ -1572,11 +2440,11 @@ Aditya</div>
 
     ctx.restore();
 
-    // Corner accent squares
+    // Corner accent orbs
     const corners = [
-      { x: offX - pad - 1, y: offY - pad - 1 },
-      { x: offX + ww + pad - 5, y: offY - pad - 1 },
-      { x: offX - pad - 1, y: offY + wh + pad - 5 },
+      { x: offX - pad - 1,     y: offY - pad - 1     },
+      { x: offX + ww + pad - 5, y: offY - pad - 1     },
+      { x: offX - pad - 1,     y: offY + wh + pad - 5 },
       { x: offX + ww + pad - 5, y: offY + wh + pad - 5 }
     ];
 
@@ -1586,9 +2454,9 @@ Aditya</div>
 
     corners.forEach(({ x, y }) => {
       const cg = ctx.createRadialGradient(x + 3, y + 3, 0, x + 3, y + 3, 7);
-      cg.addColorStop(0, '#ffffff');
+      cg.addColorStop(0,   '#ffffff');
       cg.addColorStop(0.4, '#00e5ff');
-      cg.addColorStop(1, 'rgba(0,229,255,0)');
+      cg.addColorStop(1,   'rgba(0,229,255,0)');
       ctx.fillStyle = cg;
       ctx.beginPath();
       ctx.arc(x + 3, y + 3, 5, 0, Math.PI * 2);
@@ -1597,19 +2465,20 @@ Aditya</div>
 
     ctx.restore();
 
-    // Animated edge scan line
+    // Animated horizontal scan line sweeping the field
     const scanT = (Date.now() / 1800) % 1;
     const scanY = offY + scanT * wh;
     const scanG = ctx.createLinearGradient(offX, scanY - 16, offX, scanY + 16);
-    scanG.addColorStop(0, 'rgba(0,229,255,0)');
+    scanG.addColorStop(0,   'rgba(0,229,255,0)');
     scanG.addColorStop(0.5, 'rgba(0,229,255,0.08)');
-    scanG.addColorStop(1, 'rgba(0,229,255,0)');
+    scanG.addColorStop(1,   'rgba(0,229,255,0)');
     ctx.fillStyle = scanG;
     ctx.fillRect(offX, scanY - 16, ww, 32);
   }
 
   /* ─────────────────────────────────────────────────────────────
      DRAW — FOOD PULSE RING
+     Animated expanding ring around the apple
   ───────────────────────────────────────────────────────────── */
   function drawFoodPulse(cx, cy, r) {
     const t     = (Date.now() / 500) % 1;
@@ -1629,51 +2498,49 @@ Aditya</div>
   }
 
   /* ─────────────────────────────────────────────────────────────
-     DRAW — SNAKE (head + body)
+     DRAW — FULL SNAKE (head + body segments)
   ───────────────────────────────────────────────────────────── */
   function drawSnake(offX, offY) {
     const len = snake.length;
-
-    // Draw from tail → head so head is on top
+    // Draw from tail toward head so head renders on top
     for (let i = len - 1; i >= 1; i--) {
       const seg = snake[i];
       const px  = offX + seg.x * cellSize;
       const py  = offY + seg.y * cellSize;
-      drawSnakeBodySegment(ctx, px, py, px + cellSize / 2, py + cellSize / 2, cellSize, i, len);
+      drawSnakeBodySegment(px, py, px + cellSize / 2, py + cellSize / 2, cellSize, i, len);
     }
-
-    // Draw head
+    // Draw head last (on top)
     {
       const seg = snake[0];
       const px  = offX + seg.x * cellSize;
       const py  = offY + seg.y * cellSize;
-      drawSnakeHead(ctx, px, py, px + cellSize / 2, py + cellSize / 2, cellSize, dir);
+      drawSnakeHead(px, py, px + cellSize / 2, py + cellSize / 2, cellSize, dir);
     }
   }
 
   /* ─────────────────────────────────────────────────────────────
-     DRAW — SNAKE HEAD (with eyes, tongue, glow)
+     DRAW — SNAKE HEAD
+     Detailed head with gradient, eyes, pupils, shine, tongue
   ───────────────────────────────────────────────────────────── */
-  function drawSnakeHead(ctx, px, py, cx, cy, cs, d) {
+  function drawSnakeHead(px, py, cx, cy, cs, d) {
     const r = cs * 0.44;
 
     ctx.save();
 
-    // Outer glow
+    // ── Head body ────────────────────────────────────────────
     ctx.shadowColor = '#39ff14';
     ctx.shadowBlur  = 22;
 
-    // Head body gradient
     const hg = ctx.createRadialGradient(cx - cs * 0.16, cy - cs * 0.16, cs * 0.04, cx, cy, r * 1.55);
-    hg.addColorStop(0,   '#ddffd8');
+    hg.addColorStop(0,    '#ddffd8');
     hg.addColorStop(0.18, '#70ff28');
     hg.addColorStop(0.55, '#28cc12');
-    hg.addColorStop(1,   '#0a5504');
+    hg.addColorStop(1,    '#0a5504');
     ctx.fillStyle = hg;
     ctx.roundRect(px + 1, py + 1, cs - 2, cs - 2, Math.max(4, cs * 0.24));
     ctx.fill();
 
-    // Subtle head border
+    // Head border
     ctx.shadowBlur  = 0;
     ctx.strokeStyle = 'rgba(57,255,20,0.55)';
     ctx.lineWidth   = 1.2;
@@ -1690,17 +2557,17 @@ Aditya</div>
 
     ctx.restore();
 
-    // ── Eyes ──────────────────────────────────────────────────
+    // ── Eyes ─────────────────────────────────────────────────
     const er  = Math.max(2.5, cs * 0.12);
     const eOff = r * 0.36;
     let e1x, e1y, e2x, e2y;
 
-    if (d.x === 1)       { e1x = cx + eOff; e1y = cy - eOff; e2x = cx + eOff; e2y = cy + eOff; }
+    if      (d.x ===  1) { e1x = cx + eOff; e1y = cy - eOff; e2x = cx + eOff; e2y = cy + eOff; }
     else if (d.x === -1) { e1x = cx - eOff; e1y = cy - eOff; e2x = cx - eOff; e2y = cy + eOff; }
     else if (d.y === -1) { e1x = cx - eOff; e1y = cy - eOff; e2x = cx + eOff; e2y = cy - eOff; }
     else                 { e1x = cx - eOff; e1y = cy + eOff; e2x = cx + eOff; e2y = cy + eOff; }
 
-    // Eye white (with glow)
+    // Eye whites with soft glow
     ctx.save();
     ctx.shadowColor = '#ffffff';
     ctx.shadowBlur  = 7;
@@ -1709,7 +2576,7 @@ Aditya</div>
     ctx.beginPath(); ctx.arc(e2x, e2y, er, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
 
-    // Pupil
+    // Pupils
     ctx.fillStyle = '#080808';
     ctx.beginPath(); ctx.arc(e1x + er * 0.3, e1y + er * 0.3, er * 0.62, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.arc(e2x + er * 0.3, e2y + er * 0.3, er * 0.62, 0, Math.PI * 2); ctx.fill();
@@ -1719,16 +2586,15 @@ Aditya</div>
     ctx.beginPath(); ctx.arc(e1x + er * 0.05, e1y - er * 0.18, er * 0.26, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.arc(e2x + er * 0.05, e2y - er * 0.18, er * 0.26, 0, Math.PI * 2); ctx.fill();
 
-    // ── Tongue ────────────────────────────────────────────────
+    // ── Tongue ───────────────────────────────────────────────
     const tLen = cs * 0.34;
     let tx = cx, ty = cy, ta = 0;
 
-    if (d.x === 1)       { tx = cx + r; ta = 0; }
+    if      (d.x ===  1) { tx = cx + r; ta = 0; }
     else if (d.x === -1) { tx = cx - r; ta = Math.PI; }
     else if (d.y === -1) { ty = cy - r; ta = -Math.PI / 2; }
-    else                 { ty = cy + r; ta = Math.PI / 2; }
+    else                 { ty = cy + r; ta =  Math.PI / 2; }
 
-    // Tongue flicker animation
     const flickerT = Date.now() / 180;
     const flicker  = Math.sin(flickerT) > 0.2 ? 1 : 0.6;
 
@@ -1742,10 +2608,8 @@ Aditya</div>
     ctx.lineWidth   = Math.max(1.3, cs * 0.09);
     ctx.lineCap     = 'round';
 
-    // Tongue stem
     ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(tLen, 0); ctx.stroke();
 
-    // Tongue fork
     ctx.lineWidth = Math.max(1, cs * 0.07);
     ctx.beginPath(); ctx.moveTo(tLen, 0); ctx.lineTo(tLen + cs * 0.2, -cs * 0.15); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(tLen, 0); ctx.lineTo(tLen + cs * 0.2,  cs * 0.15); ctx.stroke();
@@ -1753,11 +2617,12 @@ Aditya</div>
   }
 
   /* ─────────────────────────────────────────────────────────────
-     DRAW — SNAKE BODY SEGMENT (alternating diamond & square)
+     DRAW — SNAKE BODY SEGMENT
+     Alternates between diamond and rounded-rect shapes
   ───────────────────────────────────────────────────────────── */
-  function drawSnakeBodySegment(ctx, px, py, cx, cy, cs, idx, total) {
-    const t      = idx / total;
-    const gv     = Math.round(210 - t * 155);
+  function drawSnakeBodySegment(px, py, cx, cy, cs, idx, total) {
+    const t         = idx / total;
+    const gv        = Math.round(210 - t * 155);
     const isDiamond = (idx % 2 === 0);
 
     ctx.save();
@@ -1765,22 +2630,22 @@ Aditya</div>
     ctx.shadowBlur  = 4;
 
     if (isDiamond) {
-      // Diamond-shaped segment
-      const s   = cs * 0.44;
-      const dg  = ctx.createLinearGradient(cx - s, cy - s, cx + s, cy + s);
-      dg.addColorStop(0, `rgb(${Math.round(22 + gv * 0.18)},${gv},8)`);
+      // Diamond shape
+      const s  = cs * 0.44;
+      const dg = ctx.createLinearGradient(cx - s, cy - s, cx + s, cy + s);
+      dg.addColorStop(0,   `rgb(${Math.round(22 + gv * 0.18)},${gv},8)`);
       dg.addColorStop(0.4, `rgb(${Math.round(12 + gv * 0.12)},${Math.round(gv * 0.76)},5)`);
-      dg.addColorStop(1, `rgb(5,${Math.round(gv * 0.5)},3)`);
+      dg.addColorStop(1,   `rgb(5,${Math.round(gv * 0.5)},3)`);
 
       ctx.fillStyle   = dg;
-      ctx.strokeStyle = `rgba(57,255,20,0.2)`;
+      ctx.strokeStyle = 'rgba(57,255,20,0.2)';
       ctx.lineWidth   = 0.9;
 
       ctx.beginPath();
-      ctx.moveTo(cx, cy - s);
-      ctx.lineTo(cx + s, cy);
-      ctx.lineTo(cx, cy + s);
-      ctx.lineTo(cx - s, cy);
+      ctx.moveTo(cx,     cy - s);
+      ctx.lineTo(cx + s, cy    );
+      ctx.lineTo(cx,     cy + s);
+      ctx.lineTo(cx - s, cy    );
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
@@ -1794,28 +2659,28 @@ Aditya</div>
       ctx.closePath();
       ctx.fill();
 
-      // Scale dot
-      ctx.fillStyle = `rgba(57,255,20,0.18)`;
+      // Center scale dot
+      ctx.fillStyle = 'rgba(57,255,20,0.18)';
       ctx.beginPath();
       ctx.arc(cx, cy, cs * 0.08, 0, Math.PI * 2);
       ctx.fill();
 
     } else {
-      // Rounded rect segment
+      // Rounded rectangle shape
       const pad = Math.max(1.8, cs * 0.12);
       const sg  = ctx.createLinearGradient(px, py, px + cs, py + cs);
       sg.addColorStop(0, `rgb(${Math.round(22 + gv * 0.13)},${Math.round(gv * 0.9)},6)`);
       sg.addColorStop(1, `rgb(6,${Math.round(gv * 0.52)},3)`);
 
       ctx.fillStyle   = sg;
-      ctx.strokeStyle = `rgba(57,255,20,0.15)`;
+      ctx.strokeStyle = 'rgba(57,255,20,0.15)';
       ctx.lineWidth   = 0.9;
 
       ctx.roundRect(px + pad, py + pad, cs - pad * 2, cs - pad * 2, Math.max(2, cs * 0.17));
       ctx.fill();
       ctx.stroke();
 
-      // Subtle inner highlight
+      // Inner highlight dot
       ctx.fillStyle = 'rgba(255,255,255,0.07)';
       ctx.beginPath();
       ctx.arc(cx - cs * 0.1, cy - cs * 0.1, cs * 0.12, 0, Math.PI * 2);
@@ -1826,7 +2691,8 @@ Aditya</div>
   }
 
   /* ─────────────────────────────────────────────────────────────
-     DRAW — REALISTIC APPLE (with stem, leaf, gloss)
+     DRAW — REALISTIC APPLE
+     Full apple with body, lobes, indent, gloss, stem, and leaf
   ───────────────────────────────────────────────────────────── */
   function drawApple(cx, cy, r) {
     const t     = Date.now() / 720;
@@ -1837,24 +2703,29 @@ Aditya</div>
     ctx.shadowColor = '#ff3300';
     ctx.shadowBlur  = 22 + Math.sin(t) * 9;
 
-    // ── Apple body ──
-    const ag = ctx.createRadialGradient(cx - pr * 0.28, cy - pr * 0.22, pr * 0.04, cx, cy, pr * 1.18);
-    ag.addColorStop(0,   '#ffbbbb');
+    // ── Main body gradient ──
+    const ag = ctx.createRadialGradient(
+      cx - pr * 0.28, cy - pr * 0.22, pr * 0.04,
+      cx, cy, pr * 1.18
+    );
+    ag.addColorStop(0,    '#ffbbbb');
     ag.addColorStop(0.18, '#ff4444');
     ag.addColorStop(0.55, '#cc1111');
-    ag.addColorStop(1,   '#590000');
+    ag.addColorStop(1,    '#590000');
     ctx.fillStyle = ag;
 
-    // Main body ellipse
+    // Main ellipse body
     ctx.beginPath();
     ctx.ellipse(cx, cy + pr * 0.06, pr, pr * 0.96, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Upper lobes
+    // Upper left lobe
     ctx.fillStyle = ag;
     ctx.beginPath();
     ctx.ellipse(cx - pr * 0.25, cy - pr * 0.44, pr * 0.47, pr * 0.52, -0.28, 0, Math.PI * 2);
     ctx.fill();
+
+    // Upper right lobe
     ctx.beginPath();
     ctx.ellipse(cx + pr * 0.25, cy - pr * 0.44, pr * 0.47, pr * 0.52, 0.28, 0, Math.PI * 2);
     ctx.fill();
@@ -1865,7 +2736,7 @@ Aditya</div>
     ctx.ellipse(cx, cy - pr * 0.56, pr * 0.14, pr * 0.17, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Crease line at top indent
+    // Vertical crease line at indent
     ctx.strokeStyle = 'rgba(80,0,0,0.4)';
     ctx.lineWidth   = 0.8;
     ctx.beginPath();
@@ -1874,7 +2745,10 @@ Aditya</div>
     ctx.stroke();
 
     // ── Primary gloss reflection ──
-    const gl1 = ctx.createRadialGradient(cx - pr * 0.33, cy - pr * 0.4, 0, cx - pr * 0.33, cy - pr * 0.4, pr * 0.64);
+    const gl1 = ctx.createRadialGradient(
+      cx - pr * 0.33, cy - pr * 0.4, 0,
+      cx - pr * 0.33, cy - pr * 0.4, pr * 0.64
+    );
     gl1.addColorStop(0,   'rgba(255,255,255,0.68)');
     gl1.addColorStop(0.35, 'rgba(255,255,255,0.22)');
     gl1.addColorStop(1,   'rgba(255,255,255,0)');
@@ -1883,16 +2757,16 @@ Aditya</div>
     ctx.ellipse(cx - pr * 0.3, cy - pr * 0.3, pr * 0.46, pr * 0.29, -0.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Secondary small gloss
+    // Small secondary gloss spot
     ctx.fillStyle = 'rgba(255,255,255,0.32)';
     ctx.beginPath();
     ctx.ellipse(cx + pr * 0.2, cy - pr * 0.54, pr * 0.12, pr * 0.08, 0.4, 0, Math.PI * 2);
     ctx.fill();
 
-    // Bottom soft reflection
+    // Bottom ambient reflection
     const gl2 = ctx.createRadialGradient(cx, cy + pr * 0.65, 0, cx, cy + pr * 0.65, pr * 0.45);
-    gl2.addColorStop(0,   'rgba(255,100,100,0.2)');
-    gl2.addColorStop(1,   'rgba(255,100,100,0)');
+    gl2.addColorStop(0, 'rgba(255,100,100,0.2)');
+    gl2.addColorStop(1, 'rgba(255,100,100,0)');
     ctx.fillStyle = gl2;
     ctx.beginPath();
     ctx.ellipse(cx, cy + pr * 0.65, pr * 0.55, pr * 0.28, 0, 0, Math.PI * 2);
@@ -1900,7 +2774,7 @@ Aditya</div>
 
     ctx.restore();
 
-    // ── Stem ──────────────────────────────────────────────────
+    // ── Stem ─────────────────────────────────────────────────
     ctx.save();
     ctx.strokeStyle = '#3a1800';
     ctx.lineWidth   = Math.max(1.5, r * 0.22);
@@ -1911,8 +2785,9 @@ Aditya</div>
     ctx.moveTo(cx, cy - pr * 0.8);
     ctx.quadraticCurveTo(cx + pr * 0.54, cy - pr * 1.54, cx + pr * 0.22, cy - pr * 1.7);
     ctx.stroke();
+    ctx.restore();
 
-    // ── Leaf ──────────────────────────────────────────────────
+    // ── Leaf ─────────────────────────────────────────────────
     ctx.save();
     ctx.translate(cx + pr * 0.33, cy - pr * 1.3);
     ctx.rotate(0.52);
@@ -1921,7 +2796,7 @@ Aditya</div>
     leafG.addColorStop(0,   '#063800');
     leafG.addColorStop(0.5, '#28cc00');
     leafG.addColorStop(1,   '#063800');
-    ctx.fillStyle = leafG;
+    ctx.fillStyle   = leafG;
     ctx.shadowColor = '#00aa00';
     ctx.shadowBlur  = 6;
 
@@ -1945,11 +2820,11 @@ Aditya</div>
     ctx.fill();
 
     ctx.restore();
-    ctx.restore();
   }
 
   /* ─────────────────────────────────────────────────────────────
      DRAW — PARTICLES
+     Renders burst dots, sparkle stars, and floating score text
   ───────────────────────────────────────────────────────────── */
   function drawParticles() {
     particles.forEach(p => {
@@ -1957,7 +2832,7 @@ Aditya</div>
       ctx.globalAlpha = Math.max(0, p.life);
 
       if (p.type === 'text') {
-        // Score popup
+        // Floating "+20" score popup
         ctx.font         = `bold ${Math.round(cellSize * 0.62)}px Verdana`;
         ctx.fillStyle    = '#ffdd44';
         ctx.shadowColor  = '#ffaa00';
@@ -1965,25 +2840,27 @@ Aditya</div>
         ctx.textAlign    = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(p.label, p.x, p.y);
+
       } else if (p.type === 'sparkle') {
-        // Star sparkle
+        // 8-point star sparkle
         ctx.fillStyle   = p.color;
         ctx.shadowColor = p.color;
         ctx.shadowBlur  = 8;
         const s = p.size * p.life;
         ctx.beginPath();
-        ctx.moveTo(p.x, p.y - s);
-        ctx.lineTo(p.x + s * 0.3, p.y - s * 0.3);
-        ctx.lineTo(p.x + s, p.y);
-        ctx.lineTo(p.x + s * 0.3, p.y + s * 0.3);
-        ctx.lineTo(p.x, p.y + s);
-        ctx.lineTo(p.x - s * 0.3, p.y + s * 0.3);
-        ctx.lineTo(p.x - s, p.y);
-        ctx.lineTo(p.x - s * 0.3, p.y - s * 0.3);
+        ctx.moveTo(p.x,         p.y - s);
+        ctx.lineTo(p.x + s*0.3, p.y - s*0.3);
+        ctx.lineTo(p.x + s,     p.y);
+        ctx.lineTo(p.x + s*0.3, p.y + s*0.3);
+        ctx.lineTo(p.x,         p.y + s);
+        ctx.lineTo(p.x - s*0.3, p.y + s*0.3);
+        ctx.lineTo(p.x - s,     p.y);
+        ctx.lineTo(p.x - s*0.3, p.y - s*0.3);
         ctx.closePath();
         ctx.fill();
+
       } else {
-        // Burst dot
+        // Circular burst dot
         ctx.fillStyle   = p.color;
         ctx.shadowColor = p.color;
         ctx.shadowBlur  = 7;
@@ -1997,8 +2874,10 @@ Aditya</div>
   }
 
   /* ─────────────────────────────────────────────────────────────
-     GAME: START, STOP, PAUSE
+     GAME: START, PAUSE, DIRECTION
   ───────────────────────────────────────────────────────────── */
+
+  /** Begin a new game: hide menus, init state, start loop */
   function startGame() {
     hideAllMenus();
     resizeCanvas();
@@ -2007,41 +2886,51 @@ Aditya</div>
     gameLoop = setInterval(tick, speedMs[speedSetting]);
     draw();
     currentMenu = 'game';
+    updateCenterBtnMode();
   }
 
+  /** Set the snake's desired next direction; blocks 180° reversals */
   function setDirection(dx, dy) {
-    if (dx === -dir.x && dy === -dir.y) return; // No 180° reversals
+    if (dx === -dir.x && dy === -dir.y) return;
     nextDir = { x: dx, y: dy };
   }
 
+  /** Toggle pause state; show/hide the pause badge overlay */
   function togglePause() {
     if (!alive) return;
     paused = !paused;
-    const badge = document.getElementById('pauseBadge');
-    badge.style.display = paused ? 'block' : 'none';
+    pauseBadge.style.display = paused ? 'block' : 'none';
   }
 
   /* ─────────────────────────────────────────────────────────────
-     MENU: VISIBILITY HELPERS
+     MENU VISIBILITY HELPERS
   ───────────────────────────────────────────────────────────── */
+
+  /** Remove active class from all .menu elements */
   function hideAllMenus() {
     document.querySelectorAll('.menu').forEach(m => m.classList.remove('active'));
   }
 
+  /** Show a specific menu by its element ID */
   function showMenu(id) {
     hideAllMenus();
     document.getElementById(id).classList.add('active');
   }
 
+  /** Navigate back to the main menu */
   function backToMain() {
     showMenu('mainMenu');
     currentMenu = 'main';
     refreshMain();
+    updateCenterBtnMode();
   }
 
   /* ─────────────────────────────────────────────────────────────
-     MENU: MAIN MENU REFRESH
+     MENU REFRESH FUNCTIONS
+     Sync DOM class state with JS selection indices
   ───────────────────────────────────────────────────────────── */
+
+  /** Refresh main menu selection highlight and speed display */
   function refreshMain() {
     document.querySelectorAll('#mainList li').forEach((li, i) =>
       li.classList.toggle('selected', i === mainSel)
@@ -2050,9 +2939,7 @@ Aditya</div>
     document.getElementById('curSpeed').textContent = lbl;
   }
 
-  /* ─────────────────────────────────────────────────────────────
-     MENU: SPEED MENU REFRESH
-  ───────────────────────────────────────────────────────────── */
+  /** Refresh speed menu selection + radio buttons */
   function refreshSpeed() {
     document.querySelectorAll('#speedList li').forEach((li, i) => {
       li.classList.toggle('selected', i === speedSel);
@@ -2060,9 +2947,23 @@ Aditya</div>
     });
   }
 
-  /* ─────────────────────────────────────────────────────────────
-     MENU: GAME OVER BUTTON REFRESH (D-Pad navigation highlight)
-  ───────────────────────────────────────────────────────────── */
+  /** Refresh controller size selection + radio buttons */
+  function refreshCtrlSize() {
+    document.querySelectorAll('#ctrlSizeList li').forEach((li, i) => {
+      li.classList.toggle('selected', i === ctrlSizeSel);
+      li.querySelector('.radio').classList.toggle('checked', ctrlSizeItems[i] === ctrlSize);
+    });
+  }
+
+  /** Refresh controller opacity selection + radio buttons */
+  function refreshCtrlOpacity() {
+    document.querySelectorAll('#ctrlOpacityList li').forEach((li, i) => {
+      li.classList.toggle('selected', i === ctrlOpacitySel);
+      li.querySelector('.radio').classList.toggle('checked', ctrlOpacityItems[i] === ctrlOpacity);
+    });
+  }
+
+  /** Refresh game over button highlight based on goSel */
   function refreshGameOverButtons() {
     const restartBtn = document.getElementById('restartBtn');
     const homeBtn    = document.getElementById('homeBtn');
@@ -2077,12 +2978,33 @@ Aditya</div>
   }
 
   /* ─────────────────────────────────────────────────────────────
-     MENU: ACTIONS
+     CONTROLLER CUSTOMIZATION — apply CSS classes to DOM
   ───────────────────────────────────────────────────────────── */
+
+  /** Apply the selected size class to the controller wrapper */
+  function applyCtrlSize() {
+    controllerEl.classList.remove('dpad-size-small', 'dpad-size-medium', 'dpad-size-large');
+    controllerEl.classList.add(`dpad-size-${ctrlSize}`);
+  }
+
+  /** Apply the selected opacity class to the controller wrapper */
+  function applyCtrlOpacity() {
+    controllerEl.classList.remove('dpad-opacity-low', 'dpad-opacity-medium', 'dpad-opacity-high');
+    controllerEl.classList.add(`dpad-opacity-${ctrlOpacity}`);
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     MENU ACTION HANDLERS
+  ───────────────────────────────────────────────────────────── */
+
+  /** Execute the action for the currently highlighted main menu item */
   function doSelectMain() {
     const action = mainItems[mainSel];
-    if (action === 'newgame')  { startGame(); return; }
-    if (action === 'speed')    {
+    if (action === 'newgame') {
+      startGame();
+      return;
+    }
+    if (action === 'speed') {
       speedSel = speedItems.indexOf(speedSetting);
       showMenu('speedMenu');
       refreshSpeed();
@@ -2095,13 +3017,32 @@ Aditya</div>
       currentMenu = 'high';
       return;
     }
-    if (action === 'help')  { showMenu('helpMenu');  currentMenu = 'help';  return; }
-    if (action === 'about') { showMenu('aboutMenu'); currentMenu = 'about'; return; }
+    if (action === 'controller') {
+      ctrlSizeSel    = ctrlSizeItems.indexOf(ctrlSize);
+      ctrlOpacitySel = ctrlOpacityItems.indexOf(ctrlOpacity);
+      showMenu('controllerMenu');
+      refreshCtrlSize();
+      refreshCtrlOpacity();
+      currentMenu = 'controller';
+      return;
+    }
+    if (action === 'help') {
+      showMenu('helpMenu');
+      currentMenu = 'help';
+      return;
+    }
+    if (action === 'about') {
+      showMenu('aboutMenu');
+      currentMenu = 'about';
+      return;
+    }
   }
 
+  /** Confirm the currently highlighted speed and apply it */
   function doSelectSpeed() {
     speedSetting = speedItems[speedSel];
     refreshSpeed();
+    // Restart the game loop with the new speed if game is active
     if (gameLoop && alive) {
       clearInterval(gameLoop);
       gameLoop = setInterval(tick, speedMs[speedSetting]);
@@ -2109,8 +3050,24 @@ Aditya</div>
     updateHUD();
   }
 
+  /** Confirm the currently highlighted controller size */
+  function doSelectCtrlSize() {
+    ctrlSize    = ctrlSizeItems[ctrlSizeSel];
+    applyCtrlSize();
+    refreshCtrlSize();
+  }
+
+  /** Confirm the currently highlighted controller opacity */
+  function doSelectCtrlOpacity() {
+    ctrlOpacity = ctrlOpacityItems[ctrlOpacitySel];
+    applyCtrlOpacity();
+    refreshCtrlOpacity();
+  }
+
   /* ─────────────────────────────────────────────────────────────
-     MENU: DIRECTIONAL INPUT HANDLER
+     DIRECTIONAL INPUT ROUTER
+     Routes up/down/left/right to the appropriate handler
+     depending on which context is currently active
   ───────────────────────────────────────────────────────────── */
   function handleDir(d) {
     const dmap = {
@@ -2120,14 +3077,17 @@ Aditya</div>
       right : { x:  1, y:  0 }
     };
 
-    // ── In-game: move snake ──
+    // ── In-game: move the snake ──────────────────────────────
     if (currentMenu === 'game') {
       const v = dmap[d];
       if (v) setDirection(v.x, v.y);
       return;
     }
 
-    // ── Main menu nav ──
+    // ── Name entry: no directional navigation needed ─────────
+    if (nameEntryActive) return;
+
+    // ── Main menu: navigate items ────────────────────────────
     if (currentMenu === 'main') {
       if (d === 'up')   mainSel = (mainSel - 1 + mainItems.length) % mainItems.length;
       if (d === 'down') mainSel = (mainSel + 1) % mainItems.length;
@@ -2135,7 +3095,7 @@ Aditya</div>
       return;
     }
 
-    // ── Speed menu nav ──
+    // ── Speed menu: navigate speed options ───────────────────
     if (currentMenu === 'speed') {
       if (d === 'up')   speedSel = (speedSel - 1 + speedItems.length) % speedItems.length;
       if (d === 'down') speedSel = (speedSel + 1) % speedItems.length;
@@ -2143,7 +3103,15 @@ Aditya</div>
       return;
     }
 
-    // ── Game Over button nav (left/right) ──
+    // ── Controller menu: navigate size or opacity ─────────────
+    if (currentMenu === 'controller') {
+      if (d === 'up')   ctrlSizeSel = (ctrlSizeSel - 1 + ctrlSizeItems.length) % ctrlSizeItems.length;
+      if (d === 'down') ctrlSizeSel = (ctrlSizeSel + 1) % ctrlSizeItems.length;
+      doSelectCtrlSize();
+      return;
+    }
+
+    // ── Game Over: navigate between Restart / Home buttons ────
     if (currentMenu === 'gameover') {
       if (d === 'left'  || d === 'up')   goSel = 0;
       if (d === 'right' || d === 'down') goSel = 1;
@@ -2153,18 +3121,25 @@ Aditya</div>
   }
 
   /* ─────────────────────────────────────────────────────────────
-     MULTI-PURPOSE CENTER BUTTON HANDLER
-     - In menus: acts as SELECT
-     - In game : acts as PAUSE/RESUME toggle
+     CENTER BUTTON (SEL) HANDLER — context-sensitive
+     - In-game:    toggle pause
+     - Game Over:  confirm highlighted button action
+     - Menus:      confirm/select current item
   ───────────────────────────────────────────────────────────── */
   function handleSelect() {
-    // ── In-game: PAUSE/RESUME ──
+    // ── In-game: PAUSE/RESUME ──────────────────────────────
     if (currentMenu === 'game') {
       togglePause();
       return;
     }
 
-    // ── Game Over: execute highlighted action ──
+    // ── Name entry: confirm name ────────────────────────────
+    if (nameEntryActive) {
+      nameEntryConfirm();
+      return;
+    }
+
+    // ── Game Over: execute highlighted button ───────────────
     if (currentMenu === 'gameover') {
       if (goSel === 0) {
         startGame();
@@ -2177,33 +3152,90 @@ Aditya</div>
       return;
     }
 
-    // ── Menus: SELECT current item ──
-    if (currentMenu === 'main')  { doSelectMain(); return; }
-    if (currentMenu === 'speed') { doSelectSpeed(); backToMain(); return; }
-    if (['high', 'help', 'about'].includes(currentMenu)) { backToMain(); return; }
+    // ── Speed menu: apply selected speed, back to main ──────
+    if (currentMenu === 'speed') {
+      doSelectSpeed();
+      setTimeout(backToMain, 180);
+      return;
+    }
+
+    // ── Controller menu: apply selected settings ─────────────
+    if (currentMenu === 'controller') {
+      doSelectCtrlSize();
+      doSelectCtrlOpacity();
+      setTimeout(backToMain, 180);
+      return;
+    }
+
+    // ── Sub-menus that just need back ───────────────────────
+    if (['high', 'help', 'about'].includes(currentMenu)) {
+      backToMain();
+      return;
+    }
+
+    // ── Main menu: dispatch item action ─────────────────────
+    if (currentMenu === 'main') {
+      doSelectMain();
+      return;
+    }
   }
 
   /* ─────────────────────────────────────────────────────────────
      BACK BUTTON HANDLER
   ───────────────────────────────────────────────────────────── */
   function handleBack() {
+    // ── Name entry: cancel (keep same pending score) ─────────
+    if (nameEntryActive) {
+      // Skip name; save with default placeholder name
+      commitHighScore(NAME_PLACEHOLDER, pendingScoreValue);
+      hideNameEntry();
+      const { isNewBest } = checkHighScore(pendingScoreValue);
+      showGameOverScreen(pendingScoreValue, false);
+      return;
+    }
+
+    // ── In-game: quit to main menu ────────────────────────────
     if (currentMenu === 'game') {
       clearInterval(gameLoop);
       gameLoop = null;
       alive    = false;
       paused   = false;
-      document.getElementById('pauseBadge').style.display = 'none';
+      pauseBadge.style.display = 'none';
       backToMain();
       return;
     }
+
+    // ── Game Over: back to main ───────────────────────────────
     if (currentMenu === 'gameover') {
       backToMain();
       return;
     }
+
+    // ── Any other sub-menu: back to main ─────────────────────
     if (currentMenu !== 'main') {
       backToMain();
     }
   }
+
+  /* ─────────────────────────────────────────────────────────────
+     HIGH SCORE RESET BUTTON EVENTS
+  ───────────────────────────────────────────────────────────── */
+
+  // Open confirm dialog
+  document.getElementById('resetScoresBtn').addEventListener('click', () => {
+    confirmResetDialog.classList.add('active');
+  });
+
+  // Confirm reset — clear and close dialog
+  document.getElementById('confirmResetYes').addEventListener('click', () => {
+    resetAllHighScores();
+    confirmResetDialog.classList.remove('active');
+  });
+
+  // Cancel reset — close dialog without changing data
+  document.getElementById('confirmResetNo').addEventListener('click', () => {
+    confirmResetDialog.classList.remove('active');
+  });
 
   /* ─────────────────────────────────────────────────────────────
      EVENT LISTENERS — D-PAD BUTTONS
@@ -2219,19 +3251,19 @@ Aditya</div>
     btn.addEventListener('pointerleave', () => btn.classList.remove('pressed'));
   });
 
-  // Center button — multi-purpose SELECT / PAUSE
-  document.getElementById('centerBtn').addEventListener('click', handleSelect);
+  // Center button — multi-purpose SELECT/PAUSE
+  centerBtn.addEventListener('click', handleSelect);
 
-  // Soft keys
+  // Soft key buttons
   document.getElementById('leftSoft').addEventListener('click',  handleSelect);
   document.getElementById('rightSoft').addEventListener('click', handleBack);
 
-  // In-game UI buttons
+  // In-game overlay buttons
   document.getElementById('quitBtn').addEventListener('click',  handleBack);
   document.getElementById('pauseBtn').addEventListener('click', togglePause);
 
   /* ─────────────────────────────────────────────────────────────
-     EVENT LISTENERS — MAIN MENU LIST CLICKS
+     EVENT LISTENERS — MAIN MENU LIST ITEM CLICKS
   ───────────────────────────────────────────────────────────── */
   document.querySelectorAll('#mainList li').forEach((li, i) => {
     li.addEventListener('click', () => {
@@ -2242,13 +3274,33 @@ Aditya</div>
   });
 
   /* ─────────────────────────────────────────────────────────────
-     EVENT LISTENERS — SPEED MENU LIST CLICKS
+     EVENT LISTENERS — SPEED MENU LIST ITEM CLICKS
   ───────────────────────────────────────────────────────────── */
   document.querySelectorAll('#speedList li').forEach((li, i) => {
     li.addEventListener('click', () => {
       speedSel = i;
       doSelectSpeed();
       setTimeout(backToMain, 200);
+    });
+  });
+
+  /* ─────────────────────────────────────────────────────────────
+     EVENT LISTENERS — CONTROLLER SIZE LIST CLICKS
+  ───────────────────────────────────────────────────────────── */
+  document.querySelectorAll('#ctrlSizeList li').forEach((li, i) => {
+    li.addEventListener('click', () => {
+      ctrlSizeSel = i;
+      doSelectCtrlSize();
+    });
+  });
+
+  /* ─────────────────────────────────────────────────────────────
+     EVENT LISTENERS — CONTROLLER OPACITY LIST CLICKS
+  ───────────────────────────────────────────────────────────── */
+  document.querySelectorAll('#ctrlOpacityList li').forEach((li, i) => {
+    li.addEventListener('click', () => {
+      ctrlOpacitySel = i;
+      doSelectCtrlOpacity();
     });
   });
 
@@ -2268,31 +3320,45 @@ Aditya</div>
 
   /* ─────────────────────────────────────────────────────────────
      EVENT LISTENERS — KEYBOARD
+     Supports: Arrow keys, WASD, Numpad (2/4/6/8), Space, Enter, Esc
   ───────────────────────────────────────────────────────────── */
   document.addEventListener('keydown', e => {
-    // Prevent page scroll on game keys
+    // Prevent browser scroll on game control keys
     if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) {
       e.preventDefault();
     }
 
-    // Direction keys
-    if (e.key === 'ArrowUp'    || e.key === '2') { handleDir('up');    return; }
-    if (e.key === 'ArrowDown'  || e.key === '8') { handleDir('down');  return; }
-    if (e.key === 'ArrowLeft'  || e.key === '4') { handleDir('left');  return; }
-    if (e.key === 'ArrowRight' || e.key === '6') { handleDir('right'); return; }
+    // ── Name entry: route keypresses to name builder ──────────
+    if (nameEntryActive) {
+      if (e.key === 'Backspace') { nameEntryDeleteChar(); return; }
+      if (e.key === 'Enter')     { nameEntryConfirm(); return; }
+      if (e.key === 'Escape')    { handleBack(); return; }
+      // Alphanumeric + space → add to name
+      if (/^[A-Za-z0-9 !]$/.test(e.key) && e.key.length === 1) {
+        nameEntryAddChar(e.key.toUpperCase());
+      }
+      return;
+    }
 
-    // Select / confirm
+    // ── Directional keys ──────────────────────────────────────
+    if (e.key === 'ArrowUp'    || e.key === 'w' || e.key === '8') { handleDir('up');    return; }
+    if (e.key === 'ArrowDown'  || e.key === 's' || e.key === '2') { handleDir('down');  return; }
+    if (e.key === 'ArrowLeft'  || e.key === 'a' || e.key === '4') { handleDir('left');  return; }
+    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === '6') { handleDir('right'); return; }
+
+    // ── Confirm / Select ──────────────────────────────────────
     if (e.key === 'Enter' || e.key === ' ') { handleSelect(); return; }
 
-    // Back / escape
+    // ── Back / Escape ─────────────────────────────────────────
     if (e.key === 'Escape' || e.key === 'Backspace') { handleBack(); return; }
 
-    // P key toggles pause
+    // ── P key: toggle pause ───────────────────────────────────
     if (e.key.toLowerCase() === 'p') { togglePause(); return; }
   });
 
   /* ─────────────────────────────────────────────────────────────
-     SWIPE GESTURE SUPPORT (touch)
+     SWIPE GESTURE SUPPORT (touch on game screen canvas area)
+     Min distance 28px to register as a swipe
   ───────────────────────────────────────────────────────────── */
   let swipeStartX = 0;
   let swipeStartY = 0;
@@ -2306,8 +3372,8 @@ Aditya</div>
   document.getElementById('screen').addEventListener('touchend', e => {
     if (currentMenu !== 'game') return;
 
-    const dx = e.changedTouches[0].clientX - swipeStartX;
-    const dy = e.changedTouches[0].clientY - swipeStartY;
+    const dx  = e.changedTouches[0].clientX - swipeStartX;
+    const dy  = e.changedTouches[0].clientY - swipeStartY;
     const adx = Math.abs(dx);
     const ady = Math.abs(dy);
 
@@ -2321,7 +3387,7 @@ Aditya</div>
   }, { passive: true });
 
   /* ─────────────────────────────────────────────────────────────
-     WINDOW RESIZE
+     WINDOW RESIZE HANDLER
   ───────────────────────────────────────────────────────────── */
   window.addEventListener('resize', () => {
     resizeCanvas();
@@ -2329,11 +3395,24 @@ Aditya</div>
   });
 
   /* ─────────────────────────────────────────────────────────────
-     INIT — BOOT SEQUENCE
+     INITIALIZATION — boot sequence
   ───────────────────────────────────────────────────────────── */
+
+  // Apply default controller settings
+  applyCtrlSize();
+  applyCtrlOpacity();
+
+  // Set up canvas
   resizeCanvas();
+
+  // Sync main menu state
   refreshMain();
-  renderHighScores(); // Pre-populate high score display
+
+  // Pre-populate high score display for instant viewing
+  renderHighScores();
+
+  // Sync center button mode to current context (main menu)
+  updateCenterBtnMode();
 
 })();
 </script>
