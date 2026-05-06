@@ -1,0 +1,31 @@
+{
+  "name": "snake-runner",
+  "version": "1.0.0",
+  "description": "Snake Runner - A high-quality classic arcade game optimized for web and mobile browsers",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Static site - no build required'",
+    "test": "echo 'No tests specified'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aditya182420/Snake-runner.git"
+  },
+  "keywords": [
+    "snake-game",
+    "arcade",
+    "html5-game",
+    "browser-game",
+    "vercel-speed-insights"
+  ],
+  "author": "Aditya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Aditya182420/Snake-runner/issues"
+  },
+  "homepage": "https://github.com/Aditya182420/Snake-runner#readme",
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}
